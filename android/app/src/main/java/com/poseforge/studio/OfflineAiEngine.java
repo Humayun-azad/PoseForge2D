@@ -3,6 +3,7 @@ package com.poseforge.studio;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Base64;
 
 import com.google.mediapipe.framework.image.BitmapImageBuilder;
@@ -24,8 +25,11 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.List;
+import java.util.Locale;
 
 public final class OfflineAiEngine implements AutoCloseable {
     private static final String POSE_MODEL = "models/pose_landmarker_full.task";
@@ -97,7 +101,9 @@ public final class OfflineAiEngine implements AutoCloseable {
             caps.put("face-478");
             caps.put("face-blendshapes");
             caps.put("hands-21x2");
-            caps.put("person-hair-skin-face-clothes-accessory-segmentation");
+            caps.put("semantic-person-hair-skin-face-clothes-segmentation");
+            caps.put("covered-vs-exposed-body-skin-estimate");
+            caps.put("pixel-mask-export");
             o.put("capabilities", caps);
             return o.toString();
         } catch (Exception e) {
@@ -178,18 +184,18 @@ public final class OfflineAiEngine implements AutoCloseable {
             try {
                 ImageSegmenterResult r = segmenter.segment(mpImage);
                 JSONObject seg = new JSONObject();
+                List<String> modelLabels = segmenter.getLabels();
                 JSONArray labels = new JSONArray();
-                for (String label : segmenter.getLabels()) labels.put(label);
+                for (String label : modelLabels) labels.put(label);
                 seg.put("labels", labels);
                 if (r.categoryMask().isPresent()) {
                     MPImage mask = r.categoryMask().get();
-                    ByteBuffer buffer = ByteBufferExtractor.extract(mask);
-                    buffer.rewind();
-                    byte[] bytes = new byte[buffer.remaining()];
-                    buffer.get(bytes);
-                    seg.put("width", mask.getWidth());
-                    seg.put("height", mask.getHeight());
-                    seg.put("categoryMaskBase64", Base64.encodeToString(bytes, Base64.NO_WRAP));
+                    int width = mask.getWidth(), height = mask.getHeight();
+                    int[] categories = decodeCategoryMask(mask, width, height);
+                    seg.put("width", width);
+                    seg.put("height", height);
+                    seg.put("classMasks", buildClassMasks(categories, width, height, modelLabels));
+                    root.put("coverage", buildCoverage(categories, modelLabels));
                 }
                 root.put("segmentation", seg);
             } catch (Exception e) {
@@ -209,6 +215,91 @@ public final class OfflineAiEngine implements AutoCloseable {
                 return "{\"ok\":false,\"error\":\"offline AI failure\"}";
             }
         }
+    }
+
+    private static int[] decodeCategoryMask(MPImage mask, int width, int height) {
+        int count = width * height;
+        int[] out = new int[count];
+        ByteBuffer raw = ByteBufferExtractor.extract(mask);
+        ByteBuffer b = raw.duplicate().order(ByteOrder.nativeOrder());
+        b.rewind();
+        if (b.remaining() >= count * 4) {
+            for (int i = 0; i < count && b.remaining() >= 4; i++) out[i] = Math.max(0, Math.round(b.getFloat()));
+        } else {
+            for (int i = 0; i < count && b.hasRemaining(); i++) out[i] = b.get() & 0xff;
+        }
+        return out;
+    }
+
+    private static JSONObject buildClassMasks(int[] categories, int width, int height, List<String> labels) throws Exception {
+        int bg = findLabel(labels, "background");
+        int hair = findLabel(labels, "hair");
+        int bodySkin = findLabel(labels, "body", "skin");
+        int faceSkin = findLabel(labels, "face", "skin");
+        int clothes = findAnyLabel(labels, "clothes", "cloth", "clothing");
+        JSONObject masks = new JSONObject();
+        masks.put("person", maskPngDataUrl(categories, width, height, -2, bg));
+        if (hair >= 0) masks.put("hair", maskPngDataUrl(categories, width, height, hair, -1));
+        if (bodySkin >= 0) masks.put("bodySkin", maskPngDataUrl(categories, width, height, bodySkin, -1));
+        if (faceSkin >= 0) masks.put("faceSkin", maskPngDataUrl(categories, width, height, faceSkin, -1));
+        if (clothes >= 0) masks.put("clothes", maskPngDataUrl(categories, width, height, clothes, -1));
+        return masks;
+    }
+
+    private static JSONObject buildCoverage(int[] categories, List<String> labels) throws Exception {
+        int bodySkin = findLabel(labels, "body", "skin");
+        int clothes = findAnyLabel(labels, "clothes", "cloth", "clothing");
+        int skinCount = 0, clothesCount = 0;
+        for (int c : categories) {
+            if (c == bodySkin) skinCount++;
+            if (c == clothes) clothesCount++;
+        }
+        int total = skinCount + clothesCount;
+        double exposed = total > 0 ? (double) skinCount / (double) total : 0.0;
+        double covered = total > 0 ? (double) clothesCount / (double) total : 0.0;
+        String state = exposed < 0.22 ? "covered" : (exposed < 0.50 ? "mixed" : "high-skin-exposure");
+        JSONObject o = new JSONObject();
+        o.put("detector", "semantic-clothing-coverage");
+        o.put("state", state);
+        o.put("coveredRatio", covered);
+        o.put("exposedRatio", exposed);
+        o.put("coveredPixels", clothesCount);
+        o.put("exposedBodySkinPixels", skinCount);
+        o.put("basisPixels", total);
+        o.put("note", "Coarse clothing-vs-body-skin estimate; it does not infer hidden anatomy.");
+        return o;
+    }
+
+    private static String maskPngDataUrl(int[] categories, int width, int height, int wanted, int backgroundIndex) {
+        int[] pixels = new int[categories.length];
+        for (int i = 0; i < categories.length; i++) {
+            boolean on = wanted == -2 ? categories[i] != backgroundIndex : categories[i] == wanted;
+            pixels[i] = on ? Color.WHITE : Color.TRANSPARENT;
+        }
+        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        b.setPixels(pixels, 0, width, 0, 0, width, height);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        b.recycle();
+        return "data:image/png;base64," + Base64.encodeToString(bos.toByteArray(), Base64.NO_WRAP);
+    }
+
+    private static int findLabel(List<String> labels, String... allTokens) {
+        for (int i = 0; i < labels.size(); i++) {
+            String v = labels.get(i).toLowerCase(Locale.ROOT).replace('_', ' ').replace('-', ' ');
+            boolean ok = true;
+            for (String token : allTokens) if (!v.contains(token.toLowerCase(Locale.ROOT))) { ok = false; break; }
+            if (ok) return i;
+        }
+        return -1;
+    }
+
+    private static int findAnyLabel(List<String> labels, String... tokens) {
+        for (int i = 0; i < labels.size(); i++) {
+            String v = labels.get(i).toLowerCase(Locale.ROOT).replace('_', ' ').replace('-', ' ');
+            for (String token : tokens) if (v.contains(token.toLowerCase(Locale.ROOT))) return i;
+        }
+        return -1;
     }
 
     private static JSONArray landmarksJson(List<NormalizedLandmark> list) throws Exception {
