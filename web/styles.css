@@ -5,3 +5,6 @@
 \n.version-badge{display:inline-block;margin-left:5px;padding:1px 6px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);font-size:9px;vertical-align:middle}.easy-pad{display:grid;grid-template-columns:repeat(3,38px);grid-template-areas:'. up .' 'left . right' '. down .';gap:4px;justify-content:center;margin:8px 0}.easy-pad [data-nudge=\"0,-20\"]{grid-area:up}.easy-pad [data-nudge=\"-20,0\"]{grid-area:left}.easy-pad [data-nudge=\"20,0\"]{grid-area:right}.easy-pad [data-nudge=\"0,20\"]{grid-area:down}.easy-pad .mini{font-size:18px;padding:5px}.quick-sizes{justify-content:center}.coverage-card[data-state=\"covered\"]{outline:1px solid #45d6b566}.coverage-card[data-state=\"mixed\"]{outline:1px solid #f7c65a66}.coverage-card[data-state=\"high-skin-exposure\"]{outline:1px solid #ff8f7066}\n
 .mesh-point{pointer-events:none}
 .button.active-tool,.mini.active-tool{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 1px #45d6b533 inset}
+
+.mask-cursor{pointer-events:none}
+.status-card.anchor-live{outline:1px solid #45d6b566}
