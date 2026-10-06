@@ -111,6 +111,18 @@
       <aside class="panel right-panel">
         <div class="panel-head"><strong>Selected</strong><span id="selectedName">None</span></div>
         <section class="control-section">
+          <h3>Easy Transform</h3>
+          <label class="field"><span>Person size</span><input id="sizeCtrl" type="range" min="0.05" max="4" step="0.01"><output id="sizeOut">1.00×</output></label>
+          <div class="easy-pad">
+            <button class="mini" data-nudge="0,-20">↑</button>
+            <button class="mini" data-nudge="-20,0">←</button>
+            <button class="mini" data-nudge="20,0">→</button>
+            <button class="mini" data-nudge="0,20">↓</button>
+          </div>
+          <div class="row gap wrap quick-sizes">
+            <button class="mini" data-size="0.5">0.5×</button><button class="mini" data-size="1">1×</button><button class="mini" data-size="1.5">1.5×</button><button class="mini" data-size="2">2×</button>
+          </div>
+          <p class="hint">Character drag করে move করুন। Corner handle size বদলায়, round handle rotate করে।</p>
           <label class="field"><span>X</span><input id="xCtrl" type="range" min="-1000" max="2100" step="1"><output id="xOut"></output></label>
           <label class="field"><span>Y</span><input id="yCtrl" type="range" min="-1000" max="2350" step="1"><output id="yOut"></output></label>
           <label class="field"><span>Rotate °</span><input id="rotCtrl" type="range" min="-180" max="180" step="1"><output id="rotOut"></output></label>
