@@ -32,6 +32,15 @@ jobs:
           test -n "$SDKMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
+      - name: Download offline AI models
+        shell: bash
+        run: |
+          mkdir -p android/app/src/main/assets/models
+          curl -fL --retry 3 -o android/app/src/main/assets/models/pose_landmarker_full.task "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task"
+          curl -fL --retry 3 -o android/app/src/main/assets/models/face_landmarker.task "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+          curl -fL --retry 3 -o android/app/src/main/assets/models/hand_landmarker.task "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
+          curl -fL --retry 3 -o android/app/src/main/assets/models/selfie_multiclass_256x256.tflite "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite"
+          ls -lh android/app/src/main/assets/models
       - name: Verify JavaScript syntax
         run: |
           node --check web/ai-adapters.js
