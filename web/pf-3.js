@@ -39,4 +39,4 @@ function drawCutOverlay(){
  for(const p of cutPoints){ctx.beginPath();ctx.arc(p.x,p.y,7/zoom,0,Math.PI*2);ctx.fillStyle='#45d6b5';ctx.fill();}
  ctx.restore();
 }
-function draw(){drawBackground();for(const l of state.layers)drawLayer(l);drawCutOverlay();}
+function draw(){drawBackground();for(const l of state.layers)drawLayer(l);if(typeof drawAiOverlay==='function')drawAiOverlay();drawCutOverlay();}
