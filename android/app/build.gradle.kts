@@ -26,3 +26,8 @@ val syncWebAssets by tasks.registering(Copy::class) {
 }
 
 tasks.named("preBuild").configure { dependsOn(syncWebAssets) }
+
+
+dependencies {
+    implementation("com.google.mediapipe:tasks-vision:latest.release")
+}
