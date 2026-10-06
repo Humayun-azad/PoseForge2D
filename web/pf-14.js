@@ -107,7 +107,8 @@
     const ls=pt(layer,11),rs=pt(layer,12),le=pt(layer,13),re=pt(layer,14),lw=pt(layer,15),rw=pt(layer,16);
     const lh=pt(layer,23),rh=pt(layer,24);
     if(!ls||!rs||!le||!re||!lw||!rw||!lh||!rh)return;
-    const chest={x:(ls.x+rs.x+lh.x+rh.x)/4,y:(ls.y+rs.y)*.38+(lh.y+rh.y)*.31};
+    const shoulderY=(ls.y+rs.y)/2,hipY=(lh.y+rh.y)/2;
+    const chest={x:(ls.x+rs.x)/2,y:shoulderY+(hipY-shoulderY)*.30};
     const sw=Math.max(dist(ls,rs),layer.width*.12),arm=Math.max(dist(ls,le)+dist(le,lw),dist(rs,re)+dist(re,rw));
     const radius=Math.max(38,sw*.58);
     moveJoint(layer,13,{x:chest.x-sw*.33,y:chest.y+arm*.02},radius);
