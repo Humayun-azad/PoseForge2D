@@ -14,7 +14,7 @@ async function dbDelete(store,id){ const db=await openDB(); return new Promise((
 function imageFromDataURL(src){ return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src;}); }
 function readFileDataURL(file){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);}); }
 
-function layerDefaults(){ return {x:canvas.width/2,y:canvas.height/2,rotation:0,scaleX:1,scaleY:1,bend:0,opacity:1,brightness:1,contrast:1,saturation:1,hue:0,warmth:0,lightIntensity:0,lightAngle:315,lightSoftness:65,contactShadow:0,shadow:0,visible:true,groupId:null}; }
+function layerDefaults(){ return {x:canvas.width/2,y:canvas.height/2,rotation:0,scaleX:1,scaleY:1,bend:0,opacity:1,brightness:1,contrast:1,saturation:1,hue:0,warmth:0,lightIntensity:0,lightAngle:315,lightSoftness:65,contactShadow:0,shadow:0,detail:0,grain:0,visible:true,groupId:null}; }
 async function addCharacterData(src,name='Character',opts={}){
  if(chars().length>=MAX_CHARACTERS) throw new Error(`Studio limit is ${MAX_CHARACTERS} active characters.`);
  const im=await imageFromDataURL(src);
