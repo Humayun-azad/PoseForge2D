@@ -87,6 +87,10 @@ function drawMeshOverlay(){
     ctx.fillStyle='#ffd166';ctx.strokeStyle='rgba(255,209,102,.7)';
     for(const p0 of l.aiAnalysis.poses[0]){const p=localToWorld(l,{x:p0.x*l.width,y:p0.y*l.height});ctx.beginPath();ctx.arc(p.x,p.y,6.5/zoom,0,Math.PI*2);ctx.fill();}
   }
+  if(m.handBound && $('#showHandMeshToggle')?.checked && l.aiAnalysis?.hands?.length){
+    ctx.fillStyle='#ff9fd6';ctx.strokeStyle='rgba(255,159,214,.75)';
+    for(const hand of l.aiAnalysis.hands) for(const p0 of (hand.landmarks||[])){const p=localToWorld(l,{x:p0.x*l.width,y:p0.y*l.height});ctx.beginPath();ctx.arc(p.x,p.y,5.2/zoom,0,Math.PI*2);ctx.fill();}
+  }
   ctx.restore();
 }
 const drawBeforeV05=draw;
@@ -106,7 +110,7 @@ function setMeshMode(on){
 $('#meshModeBtn')?.addEventListener('click',()=>setMeshMode(!meshEditMode));
 $('#createMeshBtn')?.addEventListener('click',()=>{const l=selected();if(!l){say('Select a layer first.',true);return;}createMeshForLayer(l);setMeshMode(true);pushHistory('create mesh');renderUI();draw();autoSave();say('Local deformable mesh created.');});
 $('#resetMeshBtn')?.addEventListener('click',()=>{const l=selected();if(!l?.mesh){say('Selected layer has no mesh.',true);return;}resetMesh(l);pushHistory('reset mesh');draw();autoSave();say('Mesh deformation reset.');});
-$('#meshFromPoseBtn')?.addEventListener('click',()=>{const l=selected();if(!l){say('Select a character first.',true);return;}if(!l.aiAnalysis?.poses?.[0]){say('Run Analyze selected first so pose joints are available.',true);return;}if(!l.mesh)createMeshForLayer(l);l.mesh.poseBound=true;l.meshRev=(l.meshRev||0)+1;setMeshMode(true);pushHistory('bind pose mesh');renderUI();draw();autoSave();say('AI pose joints bound to local soft mesh. Drag yellow joints in Mesh Edit.');});
+$('#meshFromPoseBtn')?.addEventListener('click',()=>{const l=selected();if(!l){say('Select a character first.',true);return;}const hasPose=!!l.aiAnalysis?.poses?.[0],hasHands=!!l.aiAnalysis?.hands?.length;if(!hasPose&&!hasHands){say('Run Analyze selected first so body/hand joints are available.',true);return;}if(!l.mesh)createMeshForLayer(l);l.mesh.poseBound=hasPose;l.mesh.handBound=hasHands;l.meshRev=(l.meshRev||0)+1;setMeshMode(true);pushHistory('bind AI joints');renderUI();draw();autoSave();say('AI body and hand joints bound to the soft mesh.');});
 
 for(const id of ['meshDensityCtrl','meshRadiusCtrl','meshStrengthCtrl']){
   const el=$('#'+id);if(!el)continue;el.addEventListener('input',()=>{
@@ -116,6 +120,7 @@ for(const id of ['meshDensityCtrl','meshRadiusCtrl','meshStrengthCtrl']){
   });
 }
 $('#showPoseMeshToggle')?.addEventListener('change',draw);
+$('#showHandMeshToggle')?.addEventListener('change',draw);
 
 function nearestMeshPoint(layer,local,maxPx=24){
   if(!layer?.mesh)return -1;let best=-1,bestD=maxPx;
@@ -125,6 +130,11 @@ function nearestMeshPoint(layer,local,maxPx=24){
 function nearestPoseJoint(layer,local,maxPx=28){
   const pose=layer?.aiAnalysis?.poses?.[0];if(!pose||!layer.mesh?.poseBound)return -1;let best=-1,bestD=maxPx;
   for(let i=0;i<pose.length;i++){const p={x:pose[i].x*layer.width,y:pose[i].y*layer.height},d=Math.hypot(local.x-p.x,local.y-p.y);if(d<bestD){best=i;bestD=d;}}
+  return best;
+}
+function nearestHandJoint(layer,local,maxPx=26){
+  const hands=layer?.aiAnalysis?.hands;if(!hands?.length||!layer.mesh?.handBound)return null;let best=null,bestD=maxPx;
+  for(let h=0;h<hands.length;h++)for(let i=0;i<(hands[h].landmarks||[]).length;i++){const q=hands[h].landmarks[i],p={x:q.x*layer.width,y:q.y*layer.height},d=Math.hypot(local.x-p.x,local.y-p.y);if(d<bestD){best={handIndex:h,index:i};bestD=d;}}
   return best;
 }
 function applySoftMeshDelta(layer,origin,dx,dy,radius=meshRadius(),strength=meshStrength()){
@@ -140,7 +150,9 @@ function applySoftMeshDelta(layer,origin,dx,dy,radius=meshRadius(),strength=mesh
 
 canvas.addEventListener('pointerdown',ev=>{
   if(!meshEditMode||cutMode)return;const l=selected();if(!l?.mesh)return;const world=screenToCanvas(ev),local=worldToLocal(l,world);
-  const poseIndex=nearestPoseJoint(l,local,34/Math.max(.1,Math.abs(l.scaleX||1)));
+  const maxHit=34/Math.max(.1,Math.abs(l.scaleX||1)),handHit=nearestHandJoint(l,local,maxHit);
+  if(handHit){ev.preventDefault();ev.stopImmediatePropagation();meshGesture={type:'hand',layerId:l.id,handIndex:handHit.handIndex,index:handHit.index,last:local};canvas.setPointerCapture(ev.pointerId);return;}
+  const poseIndex=nearestPoseJoint(l,local,maxHit);
   if(poseIndex>=0){ev.preventDefault();ev.stopImmediatePropagation();meshGesture={type:'pose',layerId:l.id,index:poseIndex,last:local};canvas.setPointerCapture(ev.pointerId);return;}
   const pointIndex=nearestMeshPoint(l,local,28/Math.max(.1,Math.abs(l.scaleX||1)));
   if(pointIndex>=0){ev.preventDefault();ev.stopImmediatePropagation();meshGesture={type:'mesh',layerId:l.id,index:pointIndex,last:local};canvas.setPointerCapture(ev.pointerId);}
@@ -151,6 +163,9 @@ canvas.addEventListener('pointermove',ev=>{
   const world=screenToCanvas(ev),local=worldToLocal(l,world),dx=local.x-meshGesture.last.x,dy=local.y-meshGesture.last.y;
   if(meshGesture.type==='mesh'){
     const p=meshPoint(l,meshGesture.index);if(p)applySoftMeshDelta(l,p,dx,dy);
+  }else if(meshGesture.type==='hand'){
+    const joint=l.aiAnalysis?.hands?.[meshGesture.handIndex]?.landmarks?.[meshGesture.index];
+    if(joint){const old={x:joint.x*l.width,y:joint.y*l.height};joint.x=clamp(local.x/l.width,0,1);joint.y=clamp(local.y/l.height,0,1);applySoftMeshDelta(l,old,dx,dy,Math.min(meshRadius(),Math.min(l.width,l.height)*.16),meshStrength());}
   }else{
     const pose=l.aiAnalysis?.poses?.[0],joint=pose?.[meshGesture.index];
     if(joint){const old={x:joint.x*l.width,y:joint.y*l.height};joint.x=clamp(local.x/l.width,0,1);joint.y=clamp(local.y/l.height,0,1);applySoftMeshDelta(l,old,dx,dy);}
