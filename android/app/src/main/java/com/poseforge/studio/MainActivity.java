@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         s.setBuiltInZoomControls(false);
         s.setMediaPlaybackRequiresUserGesture(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) s.setSafeBrowsingEnabled(true);
-        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+        WebView.setWebContentsDebuggingEnabled(true);
         webView.addJavascriptInterface(new NativeBridge(), "NativeBridge");
         webView.setWebViewClient(new WebViewClient(){
             @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
