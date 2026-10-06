@@ -18,7 +18,7 @@
     const w=layer.width,h=layer.height;
     const R={whole:reg('whole',w*.5,h*.5,w*.55,h*.55)};
     Object.assign(R,{
-      head:reg('head',w*.5,h*.115,w*.17,h*.115),neck:reg('neck',w*.5,h*.235,w*.13,h*.075),chest:reg('chest',w*.5,h*.34,w*.28,h*.13),abdomen:reg('abdomen',w*.5,h*.49,w*.23,h*.12),waist:reg('waist',w*.5,h*.58,w*.22,h*.09),hips:reg('hips',w*.5,h*.67,w*.28,h*.12),
+      head:reg('head',w*.5,h*.115,w*.17,h*.115),neck:reg('neck',w*.5,h*.235,w*.13,h*.075),chest:reg('chest',w*.5,h*.34,w*.28,h*.13),lChest:reg('lChest',w*.39,h*.34,w*.15,h*.115),rChest:reg('rChest',w*.61,h*.34,w*.15,h*.115),abdomen:reg('abdomen',w*.5,h*.49,w*.23,h*.12),waist:reg('waist',w*.5,h*.58,w*.22,h*.09),hips:reg('hips',w*.5,h*.67,w*.28,h*.12),
       lUpperArm:reg('lUpperArm',w*.27,h*.34,w*.12,h*.15),rUpperArm:reg('rUpperArm',w*.73,h*.34,w*.12,h*.15),lForearm:reg('lForearm',w*.20,h*.49,w*.10,h*.15),rForearm:reg('rForearm',w*.80,h*.49,w*.10,h*.15),lHand:reg('lHand',w*.17,h*.61,w*.09,h*.09),rHand:reg('rHand',w*.83,h*.61,w*.09,h*.09),
       lThigh:reg('lThigh',w*.40,h*.78,w*.13,h*.17),rThigh:reg('rThigh',w*.60,h*.78,w*.13,h*.17),lLowerLeg:reg('lLowerLeg',w*.40,h*.91,w*.11,h*.14),rLowerLeg:reg('rLowerLeg',w*.60,h*.91,w*.11,h*.14),lFoot:reg('lFoot',w*.38,h*.985,w*.12,h*.06),rFoot:reg('rFoot',w*.62,h*.985,w*.12,h*.06)
     });return R;
@@ -34,6 +34,8 @@
     R.head=reg('head',headC.x,headC.y,Math.max(shoulderW*.42,w*.08),Math.max(shoulderW*.48,h*.06));
     const neckC=mid(headC,shoulder,.72);R.neck=reg('neck',neckC.x,neckC.y,shoulderW*.22,torsoH*.12);
     const chestC=mid(shoulder,hip,.28);R.chest=reg('chest',chestC.x,chestC.y,shoulderW*.62,torsoH*.24);
+    R.lChest=reg('lChest',chestC.x-shoulderW*.20,chestC.y+torsoH*.01,shoulderW*.31,torsoH*.20);
+    R.rChest=reg('rChest',chestC.x+shoulderW*.20,chestC.y+torsoH*.01,shoulderW*.31,torsoH*.20);
     const abdomenC=mid(shoulder,hip,.58);R.abdomen=reg('abdomen',abdomenC.x,abdomenC.y,shoulderW*.48,torsoH*.23);
     const waistC=mid(shoulder,hip,.73);R.waist=reg('waist',waistC.x,waistC.y,shoulderW*.46,torsoH*.16);
     R.hips=reg('hips',hip.x,hip.y,Math.max(dist(lh,rh)*.72,shoulderW*.48),torsoH*.22);
