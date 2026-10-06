@@ -45,3 +45,5 @@ Use images you own or have permission to edit. The shipped editor provides gener
 ## License
 
 MIT. Third-party AI models added later may have their own licenses.
+
+Build trigger: v0.2 unified-lighting APK.
