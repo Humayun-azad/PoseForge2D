@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.5</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.6</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="AI routing preference">
         <label>AI</label>
@@ -33,6 +33,7 @@
       <button id="matchSceneBtn" class="button">Match Scene</button>
       <button id="matchQualityBtn" class="button">Match Quality</button>
       <button id="meshModeBtn" class="button">Mesh Edit</button>
+      <button id="maskModeBtn" class="button">Mask Brush</button>
       <button id="undoBtn" class="button">↶ Undo</button>
       <button id="redoBtn" class="button">↷ Redo</button>
     </section>
@@ -157,12 +158,49 @@
           <div class="row gap wrap">
             <button id="createMeshBtn" class="mini">Create Mesh</button>
             <button id="resetMeshBtn" class="mini">Reset Mesh</button>
-            <button id="meshFromPoseBtn" class="mini">Bind Pose</button>
+            <button id="meshFromPoseBtn" class="mini">Bind AI Joints</button>
           </div>
           <label class="field"><span>Mesh density</span><input id="meshDensityCtrl" type="range" min="3" max="9" step="1" value="6"><output id="meshDensityOut">6</output></label>
           <label class="field"><span>Soft radius</span><input id="meshRadiusCtrl" type="range" min="30" max="420" step="5" value="170"><output id="meshRadiusOut">170</output></label>
           <label class="field"><span>Soft strength</span><input id="meshStrengthCtrl" type="range" min="0.15" max="1" step="0.05" value="0.75"><output id="meshStrengthOut">0.75</output></label>
           <label class="switch"><input id="showPoseMeshToggle" type="checkbox" checked><span>Show pose joints in Mesh Edit</span></label>
+          <label class="switch"><input id="showHandMeshToggle" type="checkbox" checked><span>Show hand/finger joints</span></label>
+        </section>
+
+        <section class="control-section">
+          <h3>Precision Mask / Occlusion</h3>
+          <p class="hint">Mask Brush-এ selected layer-এর অংশ hide/reveal করুন। এটা non-destructive এবং project-এর সাথে save হয়।</p>
+          <div class="row gap wrap">
+            <button id="maskHideBtn" class="mini active-tool">Hide</button>
+            <button id="maskRevealBtn" class="mini">Reveal</button>
+            <button id="resetMaskBtn" class="mini">Reset Mask</button>
+          </div>
+          <label class="field"><span>Brush size</span><input id="maskSizeCtrl" type="range" min="8" max="220" step="2" value="56"><output id="maskSizeOut">56</output></label>
+        </section>
+
+        <section class="control-section">
+          <h3>Face Expression</h3>
+          <p class="hint">Offline face landmarks ব্যবহার করে local mesh deformation। আগে Analyze selected চালান।</p>
+          <label class="field"><span>Smile / Frown</span><input id="faceSmileCtrl" type="range" min="-100" max="100" step="1" value="0"><output id="faceSmileOut">0</output></label>
+          <label class="field"><span>Mouth open</span><input id="faceMouthCtrl" type="range" min="0" max="100" step="1" value="0"><output id="faceMouthOut">0</output></label>
+          <label class="field"><span>Brow raise</span><input id="faceBrowCtrl" type="range" min="-100" max="100" step="1" value="0"><output id="faceBrowOut">0</output></label>
+          <label class="field"><span>Eye open</span><input id="faceEyeCtrl" type="range" min="-100" max="100" step="1" value="0"><output id="faceEyeOut">0</output></label>
+          <label class="field"><span>Jaw / Chin</span><input id="faceJawCtrl" type="range" min="-100" max="100" step="1" value="0"><output id="faceJawOut">0</output></label>
+          <div class="row gap wrap">
+            <button class="mini face-preset" data-face-preset="neutral">Neutral</button>
+            <button class="mini face-preset" data-face-preset="smile">Smile</button>
+            <button class="mini face-preset" data-face-preset="sad">Sad</button>
+            <button class="mini face-preset" data-face-preset="surprise">Surprise</button>
+          </div>
+        </section>
+
+        <section class="control-section">
+          <h3>Contact Anchor</h3>
+          <p class="hint">একটি hand/part/character অন্য layer-এর বর্তমান contact point-এ pin করুন। Target নড়লে anchored layer follow করবে।</p>
+          <label class="field"><span>Target</span><select id="anchorTarget"><option value="">Choose layer</option></select></label>
+          <label class="switch"><input id="anchorRotateToggle" type="checkbox" checked><span>Follow target rotation</span></label>
+          <div class="row gap wrap"><button id="setAnchorBtn" class="mini">Pin Here</button><button id="releaseAnchorBtn" class="mini">Release</button></div>
+          <div class="status-card"><strong>Anchor status</strong><span id="anchorStatus">Not anchored</span></div>
         </section>
 
         <section class="control-section">
@@ -192,6 +230,7 @@
   <script src="pf-9.js"></script>
   <script src="pf-10.js"></script>
   <script src="pf-11.js"></script>
+  <script src="pf-12.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
