@@ -2,9 +2,13 @@
 
 PoseForge 2D is an offline-first 2D character and scene editor for Android and browsers. The project is modular so another coding AI or developer can continue it without reverse-engineering a monolith.
 
-## What works in v0.6
+## What works in v0.7
 
 - Import real photos, anime, manga, cartoons, illustrations, and stylized humanoid raster art.
+- Bengali-first UI with an instant বাংলা / English language switch. User-facing controls can be changed at any time without changing project data.
+- Easy body-region editor for head, neck, chest/upper torso, abdomen, waist, hips/glute area, upper/lower arms, hands, thighs, lower legs and feet. AI pose landmarks improve region placement; approximate fallbacks keep the controls usable before analysis.
+- Tap-to-pick body region overlay plus large movement, width/height and rotation controls. Region edits use the existing soft deformable mesh and are saved with the project.
+- Quick pose presets include Arms Up and Swim Reach. They use MediaPipe pose landmarks plus soft mesh deformation; large pose changes can still require masking/repair because offline generative inpainting is not bundled yet.
 - Up to 25 active character layers in one studio; extracted body-part layers do not count toward that limit.
 - Drag/move, exact rotation, independent X/Y scale, flip, opacity, bend warp, layer ordering.
 - Easy transform handles and quick person scaling/movement controls.
@@ -32,7 +36,7 @@ This is deliberately style-agnostic: a human photo stays photographic, anime sta
 
 ## AI status
 
-Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.6 uses those body, face and hand landmarks to drive local deformable mesh editing. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack.
+Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.7 uses those body, face and hand landmarks to drive local deformable mesh editing. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack.
 
 See `models/README.md`, `docs/AI_HANDOFF.md`, and `server-contract/openapi.yaml`.
 
@@ -54,4 +58,4 @@ Use images you own or have permission to edit. The shipped editor provides gener
 
 MIT. Third-party AI models added later may have their own licenses.
 
-Build target: v0.6 deformable-mesh + face + hand + masks + anchors + offline-vision APK.
+Build target: v0.7 bilingual + easy body-region controls + quick pose presets + deformable mesh + face + hand + masks + anchors + offline-vision APK.
