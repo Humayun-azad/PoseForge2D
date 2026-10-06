@@ -25,6 +25,7 @@ public class MainActivity extends Activity {
     private static final int FILE_CHOOSER = 1001;
     private WebView webView;
     private ValueCallback<Uri[]> fileCallback;
+    private OfflineAiEngine offlineAi;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,7 @@ public class MainActivity extends Activity {
                 catch (Exception e) { fileCallback = null; Toast.makeText(MainActivity.this, "File picker unavailable", Toast.LENGTH_SHORT).show(); return false; }
             }
         });
+        try { offlineAi = new OfflineAiEngine(this); } catch (Exception e) { offlineAi = null; }
         webView.loadUrl("file:///android_asset/www/index.html");
     }
 
@@ -74,11 +76,27 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override protected void onDestroy() {
+        try { if (offlineAi != null) offlineAi.close(); } catch (Exception ignored) {}
+        try { if (webView != null) webView.destroy(); } catch (Exception ignored) {}
+        super.onDestroy();
+    }
+
     @Override public void onBackPressed() {
         if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed();
     }
 
     public class NativeBridge {
+        @JavascriptInterface public String offlineAiStatus() {
+            if (offlineAi == null) return "{\"ready\":false,\"reason\":\"Offline AI engine could not initialize\"}";
+            return offlineAi.status();
+        }
+
+        @JavascriptInterface public String offlineAnalyze(String dataUrl) {
+            if (offlineAi == null) return "{\"ok\":false,\"error\":\"Offline AI engine unavailable\"}";
+            return offlineAi.analyzeDataUrl(dataUrl);
+        }
+
         @JavascriptInterface public void saveBase64File(String filename, String mime, String base64) {
             runOnUiThread(() -> {
                 try {
