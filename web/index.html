@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.4</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.5</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="AI routing preference">
         <label>AI</label>
@@ -30,7 +30,9 @@
       <button id="cutModeBtn" class="button">✂ Cut Part</button>
       <button id="finishCutBtn" class="button" disabled>Finish Cut</button>
       <button id="cancelCutBtn" class="button" disabled>Cancel</button>
-      <button id="matchSceneBtn" class="button">Match Scene</button>\n      <button id="matchQualityBtn" class="button">Match Quality</button>
+      <button id="matchSceneBtn" class="button">Match Scene</button>
+      <button id="matchQualityBtn" class="button">Match Quality</button>
+      <button id="meshModeBtn" class="button">Mesh Edit</button>
       <button id="undoBtn" class="button">↶ Undo</button>
       <button id="redoBtn" class="button">↷ Redo</button>
     </section>
@@ -82,7 +84,8 @@
 
         <section id="tab-ai" class="tabpane">
           <div class="status-card"><strong>Offline AI</strong><span id="offlineStatus">Adapter ready, model pack not bundled</span></div>
-          <div id="coverageCard" class="status-card coverage-card" data-state="unknown"><strong>Body coverage</strong><span id="coverageStatus">Run Analyze selected to estimate covered vs exposed body regions.</span></div>\n          <div class="status-card"><strong>Online AI</strong><span id="onlineStatus">Endpoint not configured</span></div>
+          <div id="coverageCard" class="status-card coverage-card" data-state="unknown"><strong>Body coverage</strong><span id="coverageStatus">Run Analyze selected to estimate covered vs exposed body regions.</span></div>
+          <div class="status-card"><strong>Online AI</strong><span id="onlineStatus">Endpoint not configured</span></div>
           <label class="field"><span>Compatible AI endpoint</span><input id="endpointUrl" class="text" placeholder="https://your-server.example/v1"></label>
           <label class="field"><span>Token (optional)</span><input id="endpointToken" class="text" type="password" placeholder="not exported in projects"></label>
           <div class="row gap wrap"><button id="analyzeBtn" class="mini">Analyze selected</button><button id="autoPartsBtn" class="mini">Auto Body Parts</button><button id="semanticPartsBtn" class="mini">Semantic Split</button><button id="repairBtn" class="mini">Reconstruct/Repair</button></div>
@@ -108,6 +111,18 @@
       <aside class="panel right-panel">
         <div class="panel-head"><strong>Selected</strong><span id="selectedName">None</span></div>
         <section class="control-section">
+          <h3>Easy Transform</h3>
+          <label class="field"><span>Person size</span><input id="sizeCtrl" type="range" min="0.05" max="4" step="0.01"><output id="sizeOut">1.00×</output></label>
+          <div class="easy-pad">
+            <button class="mini" data-nudge="0,-20">↑</button>
+            <button class="mini" data-nudge="-20,0">←</button>
+            <button class="mini" data-nudge="20,0">→</button>
+            <button class="mini" data-nudge="0,20">↓</button>
+          </div>
+          <div class="row gap wrap quick-sizes">
+            <button class="mini" data-size="0.5">0.5×</button><button class="mini" data-size="1">1×</button><button class="mini" data-size="1.5">1.5×</button><button class="mini" data-size="2">2×</button>
+          </div>
+          <p class="hint">Character drag করে move করুন। Corner handle size বদলায়, round handle rotate করে।</p>
           <label class="field"><span>X</span><input id="xCtrl" type="range" min="-1000" max="2100" step="1"><output id="xOut"></output></label>
           <label class="field"><span>Y</span><input id="yCtrl" type="range" min="-1000" max="2350" step="1"><output id="yOut"></output></label>
           <label class="field"><span>Rotate °</span><input id="rotCtrl" type="range" min="-180" max="180" step="1"><output id="rotOut"></output></label>
@@ -131,7 +146,23 @@
           <label class="field"><span>Light softness</span><input id="lightSoftnessCtrl" type="range" min="0" max="100" step="1"><output id="lightSoftnessOut"></output></label>
           <label class="field"><span>Contact shadow</span><input id="contactShadowCtrl" type="range" min="0" max="100" step="1"><output id="contactShadowOut"></output></label>
           <label class="field"><span>Cast shadow blur</span><input id="shadowCtrl" type="range" min="0" max="80" step="1"><output id="shadowOut"></output></label>
-          <label class="field"><span>Blur / Detail</span><input id="detailCtrl" type="range" min="-12" max="12" step="0.5" value="0"><output id="detailOut">0.0</output></label>\n          <label class="field"><span>Grain match</span><input id="grainCtrl" type="range" min="0" max="30" step="1" value="0"><output id="grainOut">0%</output></label>\n          <button id="resetLightBtn" class="mini">Reset lighting</button>
+          <label class="field"><span>Blur / Detail</span><input id="detailCtrl" type="range" min="-12" max="12" step="0.5" value="0"><output id="detailOut">0.0</output></label>
+          <label class="field"><span>Grain match</span><input id="grainCtrl" type="range" min="0" max="30" step="1" value="0"><output id="grainOut">0%</output></label>
+          <button id="resetLightBtn" class="mini">Reset lighting</button>
+        </section>
+
+        <section class="control-section">
+          <h3>Soft Body / Mesh</h3>
+          <p class="hint">Selected layer-এ local mesh তৈরি করে control point টেনে pixels deform করুন। AI pose থাকলে joint drag কাছের mesh-কে softভাবে follow করায়।</p>
+          <div class="row gap wrap">
+            <button id="createMeshBtn" class="mini">Create Mesh</button>
+            <button id="resetMeshBtn" class="mini">Reset Mesh</button>
+            <button id="meshFromPoseBtn" class="mini">Bind Pose</button>
+          </div>
+          <label class="field"><span>Mesh density</span><input id="meshDensityCtrl" type="range" min="3" max="9" step="1" value="6"><output id="meshDensityOut">6</output></label>
+          <label class="field"><span>Soft radius</span><input id="meshRadiusCtrl" type="range" min="30" max="420" step="5" value="170"><output id="meshRadiusOut">170</output></label>
+          <label class="field"><span>Soft strength</span><input id="meshStrengthCtrl" type="range" min="0.15" max="1" step="0.05" value="0.75"><output id="meshStrengthOut">0.75</output></label>
+          <label class="switch"><input id="showPoseMeshToggle" type="checkbox" checked><span>Show pose joints in Mesh Edit</span></label>
         </section>
 
         <section class="control-section">
@@ -158,7 +189,9 @@
   <script src="pf-6.js"></script>
   <script src="pf-7.js"></script>
   <script src="pf-8.js"></script>
-  <script src="pf-9.js"></script>\n  <script src="pf-10.js"></script>
+  <script src="pf-9.js"></script>
+  <script src="pf-10.js"></script>
+  <script src="pf-11.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
