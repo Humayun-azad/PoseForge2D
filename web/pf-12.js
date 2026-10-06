@@ -3,12 +3,13 @@ let maskEditMode=false;
 let maskBrushMode='hide';
 let maskStroke=null;
 const maskRenderCache=new WeakMap();
+const maskedPixelCache=new WeakMap();
 
 function ensureMaskOps(layer){if(!Array.isArray(layer.maskOps))layer.maskOps=[];return layer.maskOps;}
 function invalidateLayerPixels(layer){
   layer.maskRev=(layer.maskRev||0)+1;
   layer.meshRev=(layer.meshRev||0)+1;
-  maskRenderCache.delete(layer);
+  maskRenderCache.delete(layer);maskedPixelCache.delete(layer);
   if(typeof meshRenderCache!=='undefined')meshRenderCache.delete(layer);
 }
 function buildLayerMask(layer){
@@ -31,10 +32,10 @@ const litBeforeMask=litLayerImage;
 litLayerImage=function(layer){
   const base=litBeforeMask(layer);if(!layer?.maskOps?.length)return base;
   const sig=[layer.maskRev||0,layer.src,layer.brightness,layer.contrast,layer.saturation,layer.hue,layer.warmth,layer.detail,layer.grain].join('|');
-  const cached=layer._maskedRenderCache;if(cached?.sig===sig)return cached.canvas;
+  const cached=maskedPixelCache.get(layer);if(cached?.sig===sig)return cached.canvas;
   const out=document.createElement('canvas');out.width=layer.width;out.height=layer.height;const g=out.getContext('2d');
   g.drawImage(base,0,0);g.globalCompositeOperation='destination-in';g.drawImage(buildLayerMask(layer),0,0);g.globalCompositeOperation='source-over';
-  layer._maskedRenderCache={sig,canvas:out};return out;
+  maskedPixelCache.set(layer,{sig,canvas:out});return out;
 };
 
 function setMaskMode(on){
