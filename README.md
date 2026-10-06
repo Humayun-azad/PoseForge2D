@@ -2,11 +2,15 @@
 
 PoseForge 2D is an offline-first 2D character and scene editor for Android and browsers. The project is modular so another coding AI or developer can continue it without reverse-engineering a monolith.
 
-## What works in v0.2
+## What works in v0.5
 
 - Import real photos, anime, manga, cartoons, illustrations, and stylized humanoid raster art.
 - Up to 25 active character layers in one studio; extracted body-part layers do not count toward that limit.
 - Drag/move, exact rotation, independent X/Y scale, flip, opacity, bend warp, layer ordering.
+- Easy transform handles and quick person scaling/movement controls.
+- Local deformable 2D mesh with soft-radius/strength controls. Mesh control points directly warp image pixels.
+- Pose-driven deformation: after Offline Analyze, AI pose joints can be bound to the local mesh and dragged to softly deform nearby pixels.
+- Mesh deformation is serialized in `.pose2d` projects and character-library entries.
 - **Cut Part**: draw a polygon on a character, extract that region into an independent editable body-part layer, and erase it from the working base layer. Edge feathering is supported.
 - Background import and body-part-level occlusion through normal layer ordering.
 - Movement connections/groups between characters.
@@ -24,7 +28,7 @@ This is deliberately style-agnostic: a human photo stays photographic, anime sta
 
 ## AI status
 
-The editor itself is functional. No large pose-generation or hidden-body reconstruction model is bundled yet. The Offline and Online AI adapter interfaces are present and documented, but a compatible model pack or server must be connected before those AI buttons perform reconstruction. This avoids pretending a placeholder is a production AI model.
+Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.5 uses those pose landmarks to drive the local deformable mesh. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack.
 
 See `models/README.md`, `docs/AI_HANDOFF.md`, and `server-contract/openapi.yaml`.
 
@@ -46,4 +50,4 @@ Use images you own or have permission to edit. The shipped editor provides gener
 
 MIT. Third-party AI models added later may have their own licenses.
 
-Build trigger: v0.2 unified-lighting APK.
+Build target: v0.5 deformable-mesh + offline-vision APK.
