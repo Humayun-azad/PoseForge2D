@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#101114" />
+  <title>PoseForge 2D Studio</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">PF</div>
+        <div><strong>PoseForge 2D</strong><small>Offline-first character & scene studio</small></div>
+      </div>
+      <div class="mode-switch" title="AI routing preference">
+        <label>AI</label>
+        <select id="aiMode">
+          <option value="offline">Offline</option>
+          <option value="online">Online</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="quickbar">
+      <label class="button primary">+ Character<input id="charInput" type="file" accept="image/*" hidden></label>
+      <label class="button">Background<input id="bgInput" type="file" accept="image/*" hidden></label>
+      <button id="cutModeBtn" class="button">✂ Cut Part</button>
+      <button id="finishCutBtn" class="button" disabled>Finish Cut</button>
+      <button id="cancelCutBtn" class="button" disabled>Cancel</button>
+      <button id="matchSceneBtn" class="button">Match Scene</button>
+      <button id="undoBtn" class="button">↶ Undo</button>
+      <button id="redoBtn" class="button">↷ Redo</button>
+    </section>
+
+    <main class="workspace">
+      <aside class="panel left-panel">
+        <div class="panel-head"><strong>Studio</strong><span id="charCount">0 / 25 people</span></div>
+        <div class="tabs">
+          <button class="tab active" data-tab="layers">Layers</button>
+          <button class="tab" data-tab="library">Library</button>
+          <button class="tab" data-tab="project">Project</button>
+          <button class="tab" data-tab="ai">AI</button>
+        </div>
+
+        <section id="tab-layers" class="tabpane active">
+          <div class="row gap">
+            <button id="layerUpBtn" class="mini">▲ Front</button>
+            <button id="layerDownBtn" class="mini">▼ Back</button>
+            <button id="duplicateBtn" class="mini">Duplicate</button>
+          </div>
+          <div id="layerList" class="layer-list"></div>
+          <hr>
+          <label class="field"><span>Connect movement with</span><select id="connectTarget"><option value="">None</option></select></label>
+          <div class="row gap"><button id="connectBtn" class="mini">Connect</button><button id="disconnectBtn" class="mini">Disconnect</button></div>
+        </section>
+
+        <section id="tab-library" class="tabpane">
+          <p class="hint">Character ও pose library এই ডিভাইসেই IndexedDB-তে থাকে।</p>
+          <input id="libraryName" class="text" placeholder="Name" value="Character" />
+          <div class="row gap wrap">
+            <button id="saveCharacterBtn" class="mini">Save Character</button>
+            <button id="savePoseBtn" class="mini">Save Pose</button>
+          </div>
+          <div class="library-grid">
+            <div><strong>Characters</strong><div id="characterLibrary" class="library-list"></div></div>
+            <div><strong>Poses</strong><div id="poseLibrary" class="library-list"></div></div>
+          </div>
+        </section>
+
+        <section id="tab-project" class="tabpane">
+          <div class="row gap wrap">
+            <button id="saveProjectBtn" class="mini">Save .pose2d</button>
+            <label class="mini file-label">Open project<input id="projectInput" type="file" accept=".pose2d,application/json" hidden></label>
+          </div>
+          <label class="switch"><input id="autoSaveToggle" type="checkbox" checked><span>Autosave locally</span></label>
+          <div class="row gap wrap"><button id="snapshotBtn" class="mini">Snapshot</button><button id="restoreAutoBtn" class="mini">Restore autosave</button></div>
+          <div id="snapshots" class="library-list"></div>
+        </section>
+
+        <section id="tab-ai" class="tabpane">
+          <div class="status-card"><strong>Offline AI</strong><span id="offlineStatus">Adapter ready, model pack not bundled</span></div>
+          <div class="status-card"><strong>Online AI</strong><span id="onlineStatus">Endpoint not configured</span></div>
+          <label class="field"><span>Compatible AI endpoint</span><input id="endpointUrl" class="text" placeholder="https://your-server.example/v1"></label>
+          <label class="field"><span>Token (optional)</span><input id="endpointToken" class="text" type="password" placeholder="not exported in projects"></label>
+          <div class="row gap wrap"><button id="analyzeBtn" class="mini">Analyze selected</button><button id="repairBtn" class="mini">Reconstruct/Repair</button></div>
+          <p class="hint">এই build-এ কোনো paid API hard-code করা নেই। AI adapters আলাদা module, পরে যেকোনো compatible model/provider বসানো যায়।</p>
+        </section>
+      </aside>
+
+      <section class="canvas-zone">
+        <div class="canvas-toolbar">
+          <span id="toolStatus">Select/drag mode</span>
+          <div class="row gap">
+            <button id="zoomOutBtn" class="mini">−</button><span id="zoomLabel">100%</span><button id="zoomInBtn" class="mini">+</button><button id="fitBtn" class="mini">Fit</button>
+          </div>
+        </div>
+        <div id="canvasScroller" class="canvas-scroller">
+          <div id="canvasWrap" class="canvas-wrap">
+            <canvas id="studioCanvas" width="1080" height="1350"></canvas>
+          </div>
+        </div>
+        <div class="mobile-tip">Tip: character টেনে move করুন। Cut Part দিয়ে polygon এঁকে আলাদা body-part layer বানাতে পারবেন।</div>
+      </section>
+
+      <aside class="panel right-panel">
+        <div class="panel-head"><strong>Selected</strong><span id="selectedName">None</span></div>
+        <section class="control-section">
+          <label class="field"><span>X</span><input id="xCtrl" type="range" min="-1000" max="2100" step="1"><output id="xOut"></output></label>
+          <label class="field"><span>Y</span><input id="yCtrl" type="range" min="-1000" max="2350" step="1"><output id="yOut"></output></label>
+          <label class="field"><span>Rotate °</span><input id="rotCtrl" type="range" min="-180" max="180" step="1"><output id="rotOut"></output></label>
+          <label class="field"><span>Scale X</span><input id="sxCtrl" type="range" min="-3" max="3" step="0.01"><output id="sxOut"></output></label>
+          <label class="field"><span>Scale Y</span><input id="syCtrl" type="range" min="-3" max="3" step="0.01"><output id="syOut"></output></label>
+          <label class="field"><span>Bend</span><input id="bendCtrl" type="range" min="-100" max="100" step="1"><output id="bendOut"></output></label>
+          <label class="field"><span>Opacity</span><input id="opacityCtrl" type="range" min="0" max="1" step="0.01"><output id="opacityOut"></output></label>
+          <div class="row gap wrap"><button id="flipHBtn" class="mini">Flip H</button><button id="flipVBtn" class="mini">Flip V</button><button id="resetTransformBtn" class="mini">Reset</button></div>
+        </section>
+
+        <section class="control-section">
+          <h3>Unified Light / Color</h3>
+          <p class="hint">একই lighting engine photo, anime, manga, cartoon ও illustration-এ কাজ করে। Style বদলায় না, শুধু আলো/রঙ harmonize করে।</p>
+          <label class="field"><span>Brightness</span><input id="brightCtrl" type="range" min="0.2" max="2" step="0.01"><output id="brightOut"></output></label>
+          <label class="field"><span>Contrast</span><input id="contrastCtrl" type="range" min="0.2" max="2" step="0.01"><output id="contrastOut"></output></label>
+          <label class="field"><span>Saturation</span><input id="satCtrl" type="range" min="0" max="2" step="0.01"><output id="satOut"></output></label>
+          <label class="field"><span>Hue</span><input id="hueCtrl" type="range" min="-180" max="180" step="1"><output id="hueOut"></output></label>
+          <label class="field"><span>Warm / Cool</span><input id="warmthCtrl" type="range" min="-100" max="100" step="1"><output id="warmthOut"></output></label>
+          <label class="field"><span>Directional light</span><input id="lightIntensityCtrl" type="range" min="0" max="100" step="1"><output id="lightIntensityOut"></output></label>
+          <label class="field"><span>Light angle</span><input id="lightAngleCtrl" type="range" min="0" max="359" step="1"><output id="lightAngleOut"></output></label>
+          <label class="field"><span>Light softness</span><input id="lightSoftnessCtrl" type="range" min="0" max="100" step="1"><output id="lightSoftnessOut"></output></label>
+          <label class="field"><span>Contact shadow</span><input id="contactShadowCtrl" type="range" min="0" max="100" step="1"><output id="contactShadowOut"></output></label>
+          <label class="field"><span>Cast shadow blur</span><input id="shadowCtrl" type="range" min="0" max="80" step="1"><output id="shadowOut"></output></label>
+          <button id="resetLightBtn" class="mini">Reset lighting</button>
+        </section>
+
+        <section class="control-section">
+          <h3>Part tools</h3>
+          <label class="field"><span>New part name</span><select id="partName"><option>Head</option><option>Torso</option><option>Arm</option><option>Hand</option><option>Leg</option><option>Foot</option><option>Hair/Clothes</option><option selected>Custom region</option></select></label>
+          <label class="field"><span>Edge feather</span><input id="featherCtrl" type="range" min="0" max="16" step="1" value="3"><output id="featherOut">3px</output></label>
+          <button id="deleteBtn" class="danger mini">Delete selected layer</button>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="bottom-actions">
+      <button id="exportBtn" class="button primary">Export PNG</button>
+      <button id="clearBtn" class="button">New Studio</button>
+      <span id="message" role="status" aria-live="polite"></span>
+    </footer>
+  </div>
+  <script src="ai-adapters.js"></script>
+  <script src="pf-1.js"></script>
+  <script src="pf-2.js"></script>
+  <script src="pf-3.js"></script>
+  <script src="pf-4.js"></script>
+  <script src="pf-5.js"></script>
+  <script src="pf-6.js"></script>
+  <script src="pf-7.js"></script>
+  <script src="pf-8.js"></script>
+</body>
+</html>

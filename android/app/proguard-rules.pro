@@ -1,0 +1,1 @@
+-keepclassmembers class com.poseforge.studio.MainActivity$NativeBridge { @android.webkit.JavascriptInterface <methods>; }
