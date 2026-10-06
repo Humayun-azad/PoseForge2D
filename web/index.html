@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.7</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.8</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -171,6 +171,8 @@
             <option value="head">Head</option>
             <option value="neck">Neck</option>
             <option value="chest">Chest / upper torso</option>
+            <option value="lChest">Left chest / breast region</option>
+            <option value="rChest">Right chest / breast region</option>
             <option value="abdomen">Abdomen</option>
             <option value="waist">Waist</option>
             <option value="hips">Hips / glute area</option>
@@ -194,6 +196,8 @@
             <button id="bodyDownBtn" class="mini">↓</button>
           </div>
           <div class="row gap wrap">
+            <button id="bodyBiggerBtn" class="mini">Bigger</button>
+            <button id="bodySmallerBtn" class="mini">Smaller</button>
             <button id="bodyWiderBtn" class="mini">Wider</button>
             <button id="bodyNarrowerBtn" class="mini">Narrower</button>
             <button id="bodyTallerBtn" class="mini">Taller</button>
@@ -201,10 +205,14 @@
             <button id="bodyRotateLeftBtn" class="mini">Rotate left</button>
             <button id="bodyRotateRightBtn" class="mini">Rotate right</button>
           </div>
+          <div class="row gap wrap">
+            <button id="bodyDirectDragBtn" class="mini">Soft drag region</button>
+          </div>
           <label class="field"><span>Move amount</span><input id="easyBodyAmountCtrl" type="range" min="4" max="80" step="1" value="24"><output id="easyBodyAmountOut">24</output></label>
           <label class="field"><span>Softness</span><input id="easyBodySoftnessCtrl" type="range" min="0.70" max="2.20" step="0.05" value="1.25"><output id="easyBodySoftnessOut">1.25×</output></label>
           <h3>Quick Pose</h3>
           <div class="row gap wrap">
+            <button id="poseHandsFrontBtn" class="mini">Hands front</button>
             <button id="poseArmsUpBtn" class="mini">Arms up</button>
             <button id="poseSwimBtn" class="mini">Swim reach</button>
             <button id="poseRelaxBtn" class="mini">Relax pose rotation</button>
@@ -292,6 +300,7 @@
   <script src="pf-12.js"></script>
   <script src="pf-i18n.js"></script>
   <script src="pf-13.js"></script>
+  <script src="pf-14.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
