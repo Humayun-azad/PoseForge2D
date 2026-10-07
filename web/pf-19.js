@@ -111,6 +111,27 @@ function releaseBodyObject(){
   var c=selectedPerson(),o=selectedObject();if(!c||!o)return;clearObjectContacts(c,o,null);commit('release object contacts');
 }
 
+function nearestHandIndex(c,poseIndex){
+  var wrist=posePt(c,poseIndex),hands=c.aiAnalysis&&c.aiAnalysis.hands||[];if(!wrist||!hands.length)return-1;var best=-1,bd=1e9;
+  hands.forEach(function(h,idx){var q=h&&h.landmarks&&h.landmarks[0];if(!q)return;var x=q.x*c.width,y=q.y*c.height,d=Math.hypot(x-wrist.x,y-wrist.y);if(d<bd){bd=d;best=idx;}});
+  return best;
+}
+function fitHandToObject(c,o,side){
+  var poseIndex=side==='l'?15:16,hi=nearestHandIndex(c,poseIndex);if(hi<0)return false;
+  var lm=c.aiAnalysis.hands[hi].landmarks||[],gripW=localToWorld(o,localGrip(o)),grip=worldToLocal(c,gripW),w=lm[0]?{x:lm[0].x*c.width,y:lm[0].y*c.height}:posePt(c,poseIndex);if(!w)return false;
+  if(!c.mesh)createMeshForLayer(c,9);
+  var chains=[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]],spread=Math.max(7,Math.min(o.width*Math.abs(o.scaleX||1),o.height*Math.abs(o.scaleY||1))*.035);
+  var dx=grip.x-w.x,dy=grip.y-w.y,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len;
+  chains.forEach(function(chain,ci){var lane=(ci-2)*spread*.48;chain.forEach(function(idx,j){var q=lm[idx];if(!q)return;var before={x:q.x*c.width,y:q.y*c.height},t=(j+1)/chain.length,curve=.30+.48*t,target={x:w.x+dx*(.35+.50*t)+nx*lane*(1-.35*t),y:w.y+dy*(.35+.50*t)+ny*lane*(1-.35*t)},after={x:before.x+(target.x-before.x)*curve,y:before.y+(target.y-before.y)*curve};applySoftMeshDelta(c,before,after.x-before.x,after.y-before.y,Math.max(10,Math.min(c.width,c.height)*.028),.48);q.x=clamp(after.x/c.width,0,1);q.y=clamp(after.y/c.height,0,1);});});
+  c.meshRev=(c.meshRev||0)+1;if(typeof meshRenderCache!=='undefined')meshRenderCache.delete(c);return true;
+}
+function fitGripFingers(){
+  var c=selectedPerson(),o=selectedObject();if(!c||!o){say(bn('Character আর Object দুটোই বাছুন।','Choose both a character and an object.'),true);return;}
+  if(!c.aiAnalysis||!(c.aiAnalysis.hands||[]).length){say(bn('আঙুল মানাতে আগে Hand/Body Analyze চালান।','Run Hand/Body Analyze before fitting fingers.'),true);return;}
+  var useL=ck('#objectUseLeft',true),useR=ck('#objectUseRight',true),ok=false;if(useL)ok=fitHandToObject(c,o,'l')||ok;if(useR)ok=fitHandToObject(c,o,'r')||ok;
+  if(!ok){say(bn('হাতের landmark grip-এর সাথে মেলানো যায়নি।','Hand landmarks could not be matched to the grip.'),true);return;}commit('v0.15 approximate finger grip');say(bn('Grip point অনুযায়ী আঙুলগুলো আনুমানিকভাবে wrap করা হয়েছে।','Fingers were approximately wrapped toward the grip point.'));
+}
+
 function attachObject(two){
   var c=selectedPerson(),o=selectedObject();if(!c||!o){say(bn('Character আর Object দুটোই বাছুন।','Choose both a character and an object.'),true);return;}
   if(!pose(c)){say(bn('Object follow-এর আগে character Analyze করুন।','Analyze the character before object follow.'),true);return;}
@@ -168,13 +189,13 @@ function overlay(){
 }
 function mount(){
   var input=$('#objectInput');if(input&&!input.dataset.v15){input.dataset.v15='1';input.addEventListener('change',objectInputChange);}
-  [['objectPrepareBtn',prepareObject],['objectRestoreBtn',restoreObject],['objectPickPointBtn',function(){pickPoint(!picking)}],['objectContactBtn',function(){addBodyToObject(false)}],['objectTwoHandBtn',function(){addBodyToObject(true)}],['objectReleaseContactBtn',releaseBodyObject],['objectFollowBtn',function(){attachObject(false)}],['objectTwoHandFollowBtn',function(){attachObject(true)}],['objectReleaseFollowBtn',releaseAttach],['objectGripDepthBtn',smartGripDepth],['objectFrontBtn',objectFront],['objectBehindBtn',objectBehind],['objectPressureBtn',pressBody],['saveObjectBtn',saveObject]].forEach(function(p){var e=$(p[0]);if(e&&!e.dataset.v15){e.dataset.v15='1';e.addEventListener('click',p[1]);}});
+  [['objectPrepareBtn',prepareObject],['objectRestoreBtn',restoreObject],['objectPickPointBtn',function(){pickPoint(!picking)}],['objectContactBtn',function(){addBodyToObject(false)}],['objectTwoHandBtn',function(){addBodyToObject(true)}],['objectReleaseContactBtn',releaseBodyObject],['objectFitFingersBtn',fitGripFingers],['objectFollowBtn',function(){attachObject(false)}],['objectTwoHandFollowBtn',function(){attachObject(true)}],['objectReleaseFollowBtn',releaseAttach],['objectGripDepthBtn',smartGripDepth],['objectFrontBtn',objectFront],['objectBehindBtn',objectBehind],['objectPressureBtn',pressBody],['saveObjectBtn',saveObject]].forEach(function(p){var e=$(p[0]);if(e&&!e.dataset.v15){e.dataset.v15='1';e.addEventListener('click',p[1]);}});
   ['objectGripX','objectGripY','objectGripSpan','objectCutoutThreshold','objectContactStrength','objectPressure'].forEach(function(id){var e=$(id);if(e&&!e.dataset.v15o){e.dataset.v15o='1';e.addEventListener('input',function(){var out=$(id+'Out');if(out)out.textContent=e.value+(id==='objectCutoutThreshold'?'':id==='objectPressure'?'px':'%');});}});
   refill();renderObjectLibrary();
 }
 var draw0=draw;draw=function(){updateLinks();draw0();overlay();};
 var render0=renderUI;renderUI=function(){render0();mount();refill();if(window.PoseForgeI18n&&PoseForgeI18n.localizeTree)PoseForgeI18n.localizeTree(document.body);};
 window.addEventListener('poseforge-language',function(){setTimeout(function(){refill();renderObjectLibrary();},0);});
-window.PoseForgeV015={objects:objects,addObjectData:addObjectData,prepareObject:prepareObject,addBodyToObject:addBodyToObject,attachObject:attachObject,pressBody:pressBody,updateLinks:updateLinks};
+window.PoseForgeV015={objects:objects,addObjectData:addObjectData,prepareObject:prepareObject,addBodyToObject:addBodyToObject,attachObject:attachObject,pressBody:pressBody,fitGripFingers:fitGripFingers,updateLinks:updateLinks};
 mount();
 })();
