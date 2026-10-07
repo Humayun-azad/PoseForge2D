@@ -1,4 +1,4 @@
-/* PoseForge 2D v0.9 easy full-body region controls + size-locked reshaping */
+/* PoseForge 2D v0.10 easy full-body region controls + area-locked reshaping */
 (function(){
   'use strict';
   let pickMode=false;
@@ -69,6 +69,19 @@
     invalidate(layer);return true;
   }
 
+  function deformRegionAreaLocked(layer,axis,factor){
+    ensureMesh(layer);const r=currentRegion(layer);if(!r||r.key==='whole')return false;
+    const f=clamp(Number(factor)||1,.55,1.82),inv=1/f;
+    for(const p of layer.mesh.points){
+      const w=weightFor(p,r);if(w<=0)continue;
+      const qx=p.x+p.dx,qy=p.y+p.dy,x=qx-r.cx,y=qy-r.cy;
+      const tx=r.cx+x*(axis==='x'?f:inv),ty=r.cy+y*(axis==='x'?inv:f);
+      p.dx=clamp(p.dx+(tx-qx)*w,-layer.width*.46,layer.width*.46);
+      p.dy=clamp(p.dy+(ty-qy)*w,-layer.height*.46,layer.height*.46);
+    }
+    invalidate(layer);return true;
+  }
+
   function scaleWhole(owner,fx,fy){
     const all=typeof wholePersonLayers==='function'?wholePersonLayers(owner):[owner,...state.layers.filter(x=>x.ownerId===owner.id)];const cx=owner.x,cy=owner.y;
     for(const l of all){if(l!==owner){l.x=cx+(l.x-cx)*fx;l.y=cy+(l.y-cy)*fy;}l.scaleX*=fx;l.scaleY*=fy;}
@@ -86,8 +99,8 @@
       else if(kind==='rotate')rotateWhole(layer,sign*Math.max(2,a/4));
     }else{
       if(kind==='moveX')deformRegion(layer,'moveX',sign*a);else if(kind==='moveY')deformRegion(layer,'moveY',sign*a);
-      else if(kind==='scaleX'){deformRegion(layer,'scaleX',reshapeFactor);deformRegion(layer,'scaleY',1/reshapeFactor);}
-      else if(kind==='scaleY'){deformRegion(layer,'scaleY',reshapeFactor);deformRegion(layer,'scaleX',1/reshapeFactor);}
+      else if(kind==='scaleX')deformRegionAreaLocked(layer,'x',reshapeFactor);
+      else if(kind==='scaleY')deformRegionAreaLocked(layer,'y',reshapeFactor);
       else if(kind==='rotate')deformRegion(layer,'rotate',sign*Math.max(2,a/5));
     }
     commitEdit('easy body region');
@@ -140,5 +153,5 @@
   const renderBeforeV07=renderUI;renderUI=function(){renderBeforeV07();PoseForgeI18n?.localizeTree(document.body);if(amountCtrl)$('#easyBodyAmountOut').textContent=amountCtrl.value;if(softnessCtrl)$('#easyBodySoftnessOut').textContent=Number(softnessCtrl.value).toFixed(2)+'×';};
   const langSel=$('#languageSelect');if(langSel){langSel.value=PoseForgeI18n?.lang?.()||'bn';langSel.addEventListener('change',()=>PoseForgeI18n?.setLanguage(langSel.value));}
   PoseForgeI18n?.localizeTree(document.body);
-  window.PoseForgeBodyRegions={bodyRegions,deformRegion,applyAction,posePreset,setPick};
+  window.PoseForgeBodyRegions={bodyRegions,deformRegion,deformRegionAreaLocked,applyAction,posePreset,setPick};
 })();
