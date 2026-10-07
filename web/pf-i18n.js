@@ -1,4 +1,4 @@
-/* PoseForge 2D v0.10 bilingual UI layer */
+/* PoseForge 2D v0.11 bilingual UI layer */
 (function(){
   'use strict';
   const KEY='poseforge.lang';
@@ -27,7 +27,9 @@
     ['Wider, keep size','চওড়া করুন, মাপ একই'],['Narrower, keep size','সরু করুন, মাপ একই'],['Taller, keep size','লম্বা করুন, মাপ একই'],['Shorter, keep size','খাটো করুন, মাপ একই'],
     ['Character Preparation','চরিত্র প্রস্তুত করুন'],['Remove Background','ব্যাকগ্রাউন্ড সরান'],['Restore Original','মূল ছবি ফিরিয়ে আনুন'],
     ['Easy Occlusion','সহজ আড়াল/সামনে'],['Front character','সামনের চরিত্র'],['Choose character','চরিত্র বাছুন'],['Put selected behind','নির্বাচিতটাকে পেছনে দিন'],['Put selected in front','নির্বাচিতটাকে সামনে আনুন'],['Cover except face','মুখ ছাড়া ঢেকে দিন'],['Bring selected body part front','বাছা শরীরের অংশ সামনে আনুন'],
-    ['Natural Soft Body','স্বাভাবিক সফট বডি'],['Force type','ফোর্সের ধরন'],['Move','সরান'],['Pull','টানুন'],['Push / compress','চাপ দিন / কমপ্রেস'],['Twist / rotate soft','নরমভাবে মোচড় / ঘোরান'],['Force strength','ফোর্সের শক্তি'],['Soft body gesture','সফট বডি জেসচার'],['Stop soft body gesture','সফট বডি বন্ধ'],['Smooth deformation','ডিফরমেশন মসৃণ করুন'],['Smart joint drag','স্মার্ট জয়েন্ট ড্র্যাগ'],['Stop smart joints','স্মার্ট জয়েন্ট বন্ধ']
+    ['Natural Soft Body','স্বাভাবিক সফট বডি'],['Force type','ফোর্সের ধরন'],['Move','সরান'],['Pull','টানুন'],['Push / compress','চাপ দিন / কমপ্রেস'],['Twist / rotate soft','নরমভাবে মোচড় / ঘোরান'],['Force strength','ফোর্সের শক্তি'],['Soft body gesture','সফট বডি জেসচার'],['Stop soft body gesture','সফট বডি বন্ধ'],['Smooth deformation','ডিফরমেশন মসৃণ করুন'],['Smart joint drag','স্মার্ট জয়েন্ট ড্র্যাগ'],['Stop smart joints','স্মার্ট জয়েন্ট বন্ধ'],
+    ['Semantic Depth','সেমান্টিক সামনে-পেছনে'],['Depth selection','কোন অংশ সামনে-পেছনে'],['Region only','শুধু বাছা অংশ'],['Selected + outward chain','বাছা অংশ + বাইরের চেইন'],['Whole limb','পুরো হাত/পা চেইন'],['Edge feather','ধারের কোমলতা'],['Bring region / chain front','অংশ / চেইন সামনে আনুন'],['Send region / chain behind','অংশ / চেইন পেছনে দিন'],['Keep face + hands front','মুখ + হাত সামনে রাখুন'],['Clear depth split','সামনে-পেছনের ভাগ মুছুন'],
+    ['Semantic Contact','সেমান্টিক কনট্যাক্ট'],['Contact target','কনট্যাক্ট লক্ষ্য'],['Target region','লক্ষ্যের অংশ'],['Pin semantic contact','সেমান্টিক কনট্যাক্ট পিন করুন'],['Release semantic contact','সেমান্টিক কনট্যাক্ট ছাড়ুন'],['No semantic contact','কোনো সেমান্টিক কনট্যাক্ট নেই']
   ];
   const maps={bn:new Map(),en:new Map()};
   for(const [en,bn] of pairs){maps.bn.set(en,bn);maps.bn.set(bn,bn);maps.en.set(en,en);maps.en.set(bn,en);}
