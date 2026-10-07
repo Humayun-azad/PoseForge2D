@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.10</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.11</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -298,6 +298,44 @@
         </section>
 
         <section class="control-section">
+          <h3>Semantic Depth</h3>
+          <p class="hint">Easy Body Regions থেকে অংশ বাছুন। শুধু region, outward chain, বা পুরো limb সামনে/পেছনে নিতে পারবেন।</p>
+          <label class="field"><span>Depth selection</span><select id="depthChainMode">
+            <option value="region">Region only</option>
+            <option value="outward">Selected + outward chain</option>
+            <option value="limb">Whole limb</option>
+          </select></label>
+          <label class="field"><span>Edge feather</span><input id="depthFeatherCtrl" type="range" min="0" max="20" step="1" value="7"><output id="depthFeatherOut">7px</output></label>
+          <div class="row gap wrap">
+            <button id="depthFrontBtn" class="mini">Bring region / chain front</button>
+            <button id="depthBehindBtn" class="mini">Send region / chain behind</button>
+            <button id="depthFaceOnlyBtn" class="mini">Cover except face</button>
+            <button id="depthFaceHandsBtn" class="mini">Keep face + hands front</button>
+            <button id="depthClearBtn" class="mini">Clear depth split</button>
+          </div>
+        </section>
+
+        <section class="control-section">
+          <h3>Semantic Contact</h3>
+          <p class="hint">হাত বা পায়ের limb বাছুন, target character ও target region দিন। IK contact point ধরে follow করার চেষ্টা করবে।</p>
+          <label class="field"><span>Contact target</span><select id="semanticContactTarget"><option value="">Choose character</option></select></label>
+          <label class="field"><span>Target region</span><select id="semanticTargetRegion">
+            <option value="head">Head</option>
+            <option value="chest">Chest / upper torso</option>
+            <option value="abdomen" selected>Abdomen</option>
+            <option value="waist">Waist</option>
+            <option value="hips">Hips</option>
+            <option value="lHand">Left hand</option>
+            <option value="rHand">Right hand</option>
+          </select></label>
+          <div class="row gap wrap">
+            <button id="semanticContactBtn" class="mini">Pin semantic contact</button>
+            <button id="semanticReleaseBtn" class="mini">Release semantic contact</button>
+          </div>
+          <div class="status-card"><strong>Semantic contact</strong><span id="semanticContactStatus">No semantic contact</span></div>
+        </section>
+
+        <section class="control-section">
           <h3>Contact Anchor</h3>
           <p class="hint">একটি hand/part/character অন্য layer-এর বর্তমান contact point-এ pin করুন। Target নড়লে anchored layer follow করবে।</p>
           <label class="field"><span>Target</span><select id="anchorTarget"><option value="">Choose layer</option></select></label>
@@ -339,6 +377,7 @@
   <script src="pf-14.js"></script>
   <script src="pf-15.js"></script>
   <script src="pf-16.js"></script>
+  <script src="pf-17.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
