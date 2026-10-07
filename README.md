@@ -39,6 +39,7 @@ PoseForge 2D is an offline-first 2D character and scene editor for Android and b
 - Object preparation includes an offline edge-connected background remover for simple object photos. Difficult silhouettes stay compatible with the existing Precision Mask cleanup workflow.
 - Human ↔ object contacts reuse the general interaction solver: a hand, foot, elbow, or knee can be solved to a picked point on an object, with live contact and auto-reach where possible.
 - Two-hand hold places both hands on configurable grip points across the object instead of relying on a named object preset.
+- v0.15 also includes **approximate finger grip fitting** when hand landmarks are available. Finger chains bend toward the selected grip point and remain editable through the existing hand/mesh tools. This is a practical 2D approximation, not full 3D grasp physics.
 - Objects can follow a selected body anchor, or follow both hands while tracking hand-to-hand angle. Optional two-hand distance scaling is available for suitable props.
 - Object depth helpers can place the prop in front/behind the person and create hand-front semantic passes for grip overlap.
 - User-triggered object pressure can apply a local soft-body response to a chosen visible body region. It remains an editable 2D deformation, not a claim of full biomechanical simulation.
