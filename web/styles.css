@@ -24,3 +24,10 @@
 .contact-list{display:grid;gap:6px;margin-top:8px}
 .contact-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;padding:7px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025)}
 .contact-row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem}
+
+
+/* v0.14 repair studio */
+.repair-studio-card{border:1px solid rgba(255,114,94,.24);border-radius:12px;padding:10px;margin:10px 0;background:rgba(255,114,94,.028)}
+.repair-studio-card h3{margin:0 0 8px;color:#ff9a87}
+#repairStudioStatus[data-error="1"]{color:#ff9a87}
+#repairInstruction{min-width:0}
