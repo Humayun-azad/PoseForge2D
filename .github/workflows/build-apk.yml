@@ -2,7 +2,7 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [ main, v0.15-object-interaction ]
+    branches: [ main, v0.15-object-interaction, v0.15-object-polish ]
     paths:
       - 'android/**'
       - 'web/**'
