@@ -18,3 +18,9 @@
 .body-pad .mini{font-size:18px;padding:4px}
 #languageSelect{min-width:92px}
 @media(max-width:520px){.topbar{align-items:flex-start}.mode-switch{font-size:12px}.easy-body-card .field{grid-template-columns:94px minmax(0,1fr) 42px}}
+
+/* v0.12 general interaction graph */
+.interaction-graph-card{border:1px solid rgba(124,243,200,.26);border-radius:14px;padding:12px;background:rgba(124,243,200,.035)}
+.contact-list{display:grid;gap:6px;margin-top:8px}
+.contact-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;padding:7px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.025)}
+.contact-row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem}
