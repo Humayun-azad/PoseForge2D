@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.11</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.12</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -333,6 +333,35 @@
             <button id="semanticReleaseBtn" class="mini">Release semantic contact</button>
           </div>
           <div class="status-card"><strong>Semantic contact</strong><span id="semanticContactStatus">No semantic contact</span></div>
+        </section>
+
+        <section class="control-section interaction-graph-card">
+          <h3>General Interaction Graph</h3>
+          <p class="hint">Preset is only a shortcut. Create self-contact or multi-character contact, then keep editing pose, mesh and depth freely.</p>
+          <label class="field"><span>Interaction target</span><select id="interactionTarget"><option value="self">Own body (Self)</option></select></label>
+          <label class="field"><span>Source anchor</span><select id="interactionSource">
+            <option value="rHand">Right hand</option><option value="lHand">Left hand</option><option value="rElbow">Right elbow</option><option value="lElbow">Left elbow</option><option value="rFoot">Right foot</option><option value="lFoot">Left foot</option><option value="rKnee">Right knee</option><option value="lKnee">Left knee</option><option value="head">Head</option><option value="chest">Chest / upper torso</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips / glute area</option>
+          </select></label>
+          <label class="field"><span>Target anchor</span><select id="interactionTargetRegion">
+            <option value="head">Head</option><option value="neck">Neck</option><option value="chest" selected>Chest / upper torso</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips / glute area</option><option value="lShoulder">Left shoulder</option><option value="rShoulder">Right shoulder</option><option value="lUpperArm">Left upper arm</option><option value="rUpperArm">Right upper arm</option><option value="lElbow">Left elbow</option><option value="rElbow">Right elbow</option><option value="lForearm">Left forearm</option><option value="rForearm">Right forearm</option><option value="lHand">Left hand</option><option value="rHand">Right hand</option><option value="lThigh">Left thigh</option><option value="rThigh">Right thigh</option><option value="lKnee">Left knee</option><option value="rKnee">Right knee</option><option value="lLowerLeg">Left lower leg</option><option value="rLowerLeg">Right lower leg</option><option value="lFoot">Left foot</option><option value="rFoot">Right foot</option>
+          </select></label>
+          <div class="row gap wrap"><button id="interactionPickTargetBtn" class="mini">Tap target to pick point</button></div>
+          <label class="field"><span>Contact strength</span><input id="interactionStrength" type="range" min="20" max="100" step="5" value="100"><output id="interactionStrengthOut">100%</output></label>
+          <label class="field"><span>Target offset X</span><input id="interactionOffsetX" type="range" min="-180" max="180" step="5" value="0"><output id="interactionOffsetXOut">0px</output></label>
+          <label class="field"><span>Target offset Y</span><input id="interactionOffsetY" type="range" min="-180" max="180" step="5" value="0"><output id="interactionOffsetYOut">0px</output></label>
+          <label class="field"><span>Depth on contact</span><select id="interactionDepth"><option value="keep">Keep current depth</option><option value="front">Bring source limb front</option><option value="behind">Send source limb behind</option></select></label>
+          <label class="switch"><input id="interactionAutoReach" type="checkbox" checked><span>Auto move character closer if limb cannot reach</span></label>
+          <label class="switch"><input id="interactionLive" type="checkbox" checked><span>Keep contact while target moves</span></label>
+          <div class="row gap wrap"><button id="interactionAddBtn" class="mini">Add contact</button><button id="interactionClearBtn" class="mini">Clear contacts</button></div>
+          <h4>Pair helpers</h4>
+          <label class="field"><span>Pair distance</span><input id="interactionDistance" type="range" min="60" max="360" step="5" value="160"><output id="interactionDistanceOut">160px</output></label>
+          <div class="row gap wrap"><button id="interactionFaceBtn" class="mini">Face target</button><button id="interactionNearBtn" class="mini">Arrange distance</button><button id="interactionFrontBtn" class="mini">Bring selected front</button><button id="interactionBehindBtn" class="mini">Send selected behind</button></div>
+          <label class="field"><span>Quick interaction</span><select id="interactionPreset"><option value="faceoff">Face-off / argument</option><option value="handhold">Hand hold</option><option value="embrace">Close embrace</option><option value="grapple">Wrestle / clinch</option><option value="push">Push / shove</option><option value="block">Fight block</option><option value="kick">Kick contact</option><option value="support">Carry / support start</option></select></label>
+          <button id="interactionPresetBtn" class="mini">Apply shortcut</button>
+          <h4>Single character shortcuts</h4>
+          <div class="row gap wrap"><button id="selfHandsHipsBtn" class="mini">Hands to own hips</button><button id="selfHandHeadBtn" class="mini">Hand to own head</button><button id="selfHandsChestBtn" class="mini">Hands to own chest</button></div>
+          <div class="status-card"><strong>Interaction solver</strong><span id="interactionStatus">No interaction contacts</span></div>
+          <div id="interactionContactList" class="library-list contact-list"></div>
         </section>
 
         <section class="control-section">
