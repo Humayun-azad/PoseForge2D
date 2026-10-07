@@ -4,7 +4,7 @@ const canvas = $('#studioCanvas');
 const ctx = canvas.getContext('2d', {alpha:false});
 const wrap = $('#canvasWrap');
 const MAX_CHARACTERS = 25;
-const DB_NAME='poseforge2d'; const DB_VERSION=1;
+const DB_NAME='poseforge2d'; const DB_VERSION=2;
 let dbPromise = null;
 let zoom = 1;
 let cutMode = false;
