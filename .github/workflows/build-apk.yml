@@ -45,20 +45,22 @@ jobs:
         run: |
           node --check web/ai-adapters.js
           for f in web/pf-*.js; do node --check "$f"; done
+      - name: Run web smoke tests
+        run: node tests/web-smoke.mjs
       - name: Build debug APK
         working-directory: android
         run: gradle --no-daemon assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: PoseForge2D-v0.13-interaction-studio-ai-apk
+          name: PoseForge2D-v0.14-repair-harmony-ai-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
       - name: Upload source bundle
         uses: actions/upload-artifact@v4
         with:
-          name: PoseForge2D-v0.13-source
+          name: PoseForge2D-v0.14-source
           path: |
             README.md
             LICENSE
