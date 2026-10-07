@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.9</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.10</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -208,6 +208,22 @@
           </div>
           <label class="field"><span>Move amount</span><input id="easyBodyAmountCtrl" type="range" min="4" max="80" step="1" value="24"><output id="easyBodyAmountOut">24</output></label>
           <label class="field"><span>Softness</span><input id="easyBodySoftnessCtrl" type="range" min="0.70" max="2.20" step="0.05" value="1.25"><output id="easyBodySoftnessOut">1.25×</output></label>
+          <h3>Natural Soft Body</h3>
+          <p class="hint">নির্বাচিত শরীরের অংশে টেনে Move, Pull, Push, Bend বা Twist দিন। Pull/Push যতটা সম্ভব মূল local size/area ধরে রাখে।</p>
+          <label class="field"><span>Force type</span><select id="softBodyMode">
+            <option value="move">Move</option>
+            <option value="pull">Pull</option>
+            <option value="push">Push / compress</option>
+            <option value="bend">Bend</option>
+            <option value="twist">Twist / rotate soft</option>
+          </select></label>
+          <label class="field"><span>Force strength</span><input id="softBodyForceCtrl" type="range" min="10" max="100" step="5" value="55"><output id="softBodyForceOut">55%</output></label>
+          <div class="row gap wrap">
+            <button id="softBodyGestureBtn" class="mini">Soft body gesture</button>
+            <button id="meshSmoothBtn" class="mini">Smooth deformation</button>
+            <button id="smartJointBtn" class="mini">Smart joint drag</button>
+          </div>
+          <p class="hint">Smart Joint Drag-এ কবজি/গোড়ালি বা আঙুলের ডগা টানলে elbow/knee/finger joints সংযুক্তভাবে বাঁকবে এবং segment length ধরে রাখার চেষ্টা করবে। আগে Analyze selected চালান।</p>
           <h3>Quick Pose</h3>
           <div class="row gap wrap">
             <button id="poseHandsFrontBtn" class="mini">Hands front</button>
@@ -322,6 +338,7 @@
   <script src="pf-13.js"></script>
   <script src="pf-14.js"></script>
   <script src="pf-15.js"></script>
+  <script src="pf-16.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
