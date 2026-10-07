@@ -24,7 +24,7 @@ PoseForge 2D is an offline-first 2D character and scene editor for Android and b
 - v0.13 adds **soft contact response**: a user-triggered local soft-body deformation can be applied at the chosen target region for contact/pressure scenes without turning it into an automatic permanent physics simulation.
 - v0.13 adds **pair follow** to preserve the arranged spacing of an interacting pair while the target character is moved, plus a stronger optional solver pass for dense multi-contact setups.
 - Source anchors now also expose shoulders and hips for broader body-to-body positioning. Presets remain shortcuts only; the same manual contact tools work for single-character self-contact and multi-character scenes.
- A character can keep multiple simultaneous contacts to another character or to its own body.
+- A character can keep multiple simultaneous contacts to another character or to its own body.
 - Source anchors include hands, feet, elbows, knees and body anchors; targets include major visible body regions and joints. Exact target offsets and tap-to-pick contact points make placement less preset-bound.
 - Hand/foot contacts use the existing two-bone IK foundation, elbow/knee contacts use constrained mid-joint solving, and live contacts keep following a moving target. Auto-reach can move the source character closer when a limb cannot reach without stretching the measured limb chain.
 - Contact depth can keep the current order or reuse v0.11 semantic depth to bring the source limb in front / send it behind. Contacts are stored on the character and therefore travel with normal project serialization.
