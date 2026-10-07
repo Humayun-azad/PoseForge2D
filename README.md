@@ -2,12 +2,16 @@
 
 PoseForge 2D is an offline-first 2D character and scene editor for Android and browsers. The project is modular so another coding AI or developer can continue it without reverse-engineering a monolith.
 
-## What works in v0.9
+## What works in v0.10
 
 - Import real photos, anime, manga, cartoons, illustrations, and stylized humanoid raster art.
 - Bengali-first UI with an instant বাংলা / English language switch. User-facing controls can be changed at any time without changing project data.
 - Easy body-region editor for head, neck, chest/upper torso, left/right chest soft regions, abdomen, waist, hips/glute area, upper/lower arms, hands, thighs, lower legs and feet. AI pose landmarks improve region placement; approximate fallbacks keep the controls usable before analysis.
 - Tap-to-pick body regions with movement, rotation and direct soft-drag controls. Width/height reshaping now uses reciprocal scaling so the selected region keeps approximately the same 2D area instead of acting like an arbitrary size changer. Region edits use the existing soft deformable mesh and are saved with the project.
+- Natural Soft Body gestures add Move, Pull, Push/Compress, Bend and Twist on any selected body region. Pull/Push use directional reciprocal deformation so the local area stays approximately constant instead of behaving like a size slider.
+- Character-adaptive region profiles sample the imported silhouette/alpha around the selected region when possible, so the same gesture reacts to the original visible shape instead of one fixed universal body size.
+- Smart Joint Drag provides two-bone IK for wrists/ankles and FABRIK-style finger chains for fingertips. Limb segment lengths are preserved while connected elbow/knee/finger joints bend automatically.
+- Mesh smoothing is available after strong edits to soften harsh local folds without resetting the pose.
 - Quick pose presets include Hands Front, Arms Up and Swim Reach. They use MediaPipe pose landmarks plus soft mesh deformation; large pose changes can still require masking/repair because offline generative inpainting is not bundled yet.
 - Character imports preserve the original image and automatically try offline person segmentation to remove the source background. Manual Remove Background and Restore Original controls are included.
 - Easy occlusion tools can move one character behind another, keep only the hidden character's face/head in front, or bring the currently selected body region forward as an editable front-pass layer. This supports simple hidden-body/visible-hand scene construction without forcing users to paint masks first.
@@ -38,7 +42,7 @@ This is deliberately style-agnostic: a human photo stays photographic, anime sta
 
 ## AI status
 
-Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.9 uses those body, face and hand landmarks to drive local deformable mesh editing. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack.
+Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.10 uses those body, face and hand landmarks to drive local deformable mesh editing, smart limb IK and finger-chain posing. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack.
 
 See `models/README.md`, `docs/AI_HANDOFF.md`, and `server-contract/openapi.yaml`.
 
@@ -60,4 +64,4 @@ Use images you own or have permission to edit. The shipped editor provides gener
 
 MIT. Third-party AI models added later may have their own licenses.
 
-Build target: v0.9 size-locked soft-body reshaping + automatic character cutout + easy occlusion/front-pass editing + bilingual UI + deformable mesh + face + hand + masks + anchors + offline-vision APK.
+Build target: v0.10 natural full-body soft deformation + size-locked local shaping + smart limb/finger IK + automatic character cutout + easy occlusion/front-pass editing + bilingual UI + deformable mesh + face + hand + masks + anchors + offline-vision APK.

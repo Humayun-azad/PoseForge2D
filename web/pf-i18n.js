@@ -1,4 +1,4 @@
-/* PoseForge 2D v0.9 bilingual UI layer */
+/* PoseForge 2D v0.10 bilingual UI layer */
 (function(){
   'use strict';
   const KEY='poseforge.lang';
@@ -26,7 +26,8 @@
     ['Quick Pose','দ্রুত ভঙ্গি'],['Hands front','হাত সামনে'],['Arms up','হাত ওপরে'],['Swim reach','সাঁতারের ভঙ্গি'],['Relax pose rotation','ভঙ্গির ঘোরানো স্বাভাবিক'],['Analyze first for precise pose presets. Region controls also work approximately without AI.','নির্ভুল ভঙ্গির জন্য আগে ছবি বিশ্লেষণ করুন। এআই ছাড়াও অংশের কন্ট্রোল আনুমানিকভাবে কাজ করবে।'],
     ['Wider, keep size','চওড়া করুন, মাপ একই'],['Narrower, keep size','সরু করুন, মাপ একই'],['Taller, keep size','লম্বা করুন, মাপ একই'],['Shorter, keep size','খাটো করুন, মাপ একই'],
     ['Character Preparation','চরিত্র প্রস্তুত করুন'],['Remove Background','ব্যাকগ্রাউন্ড সরান'],['Restore Original','মূল ছবি ফিরিয়ে আনুন'],
-    ['Easy Occlusion','সহজ আড়াল/সামনে'],['Front character','সামনের চরিত্র'],['Choose character','চরিত্র বাছুন'],['Put selected behind','নির্বাচিতটাকে পেছনে দিন'],['Put selected in front','নির্বাচিতটাকে সামনে আনুন'],['Cover except face','মুখ ছাড়া ঢেকে দিন'],['Bring selected body part front','বাছা শরীরের অংশ সামনে আনুন']
+    ['Easy Occlusion','সহজ আড়াল/সামনে'],['Front character','সামনের চরিত্র'],['Choose character','চরিত্র বাছুন'],['Put selected behind','নির্বাচিতটাকে পেছনে দিন'],['Put selected in front','নির্বাচিতটাকে সামনে আনুন'],['Cover except face','মুখ ছাড়া ঢেকে দিন'],['Bring selected body part front','বাছা শরীরের অংশ সামনে আনুন'],
+    ['Natural Soft Body','স্বাভাবিক সফট বডি'],['Force type','ফোর্সের ধরন'],['Move','সরান'],['Pull','টানুন'],['Push / compress','চাপ দিন / কমপ্রেস'],['Twist / rotate soft','নরমভাবে মোচড় / ঘোরান'],['Force strength','ফোর্সের শক্তি'],['Soft body gesture','সফট বডি জেসচার'],['Stop soft body gesture','সফট বডি বন্ধ'],['Smooth deformation','ডিফরমেশন মসৃণ করুন'],['Smart joint drag','স্মার্ট জয়েন্ট ড্র্যাগ'],['Stop smart joints','স্মার্ট জয়েন্ট বন্ধ']
   ];
   const maps={bn:new Map(),en:new Map()};
   for(const [en,bn] of pairs){maps.bn.set(en,bn);maps.bn.set(bn,bn);maps.en.set(en,en);maps.en.set(bn,en);}
