@@ -36,6 +36,12 @@ PoseForge 2D is an offline-first 2D character and scene editor for Android and b
 - Contact depth can keep the current order or reuse v0.11 semantic depth to bring the source limb in front / send it behind. Contacts are stored on the character and therefore travel with normal project serialization.
 - Pair helpers and starting shortcuts cover face-off/argument, hand-hold, close embrace, wrestle/clinch, push, block, kick and carry/support. These remain shortcuts only; manual pose, mesh, contact and depth editing continues afterwards.
 - The same system also supports single-character self-contact, with quick starts such as hand-to-head or hands-to-hips/chest.
+- v0.14 adds **Repair Studio** with a user-painted repair mask and explicit **Preview → Accept / Retry / Cancel** workflow. Repair stays user-triggered by default, with optional Auto Preview.
+- Offline mode now has a deterministic local context-repair engine for small/medium visible gaps and edge damage. It is useful for cleanup and continuity, but is intentionally documented as **not** a neural generator for large unseen anatomy.
+- Online repair remains provider-neutral and can receive the editable repair mask, safe visible-region instruction, strategy, and retry seed through the existing reconstruct contract.
+- Accepted repairs are stored as separate editable repair-overlay layers instead of destructively replacing the original character image.
+- v0.14 adds **Scene Harmony Pro** to jointly match exposure, color temperature, contrast, saturation, blur/detail, grain, contact-shadow strength and cast-shadow softness against the current background, for one selected layer or all scene characters.
+
 - Up to 25 active character layers in one studio; extracted body-part layers do not count toward that limit.
 - Drag/move, exact rotation, independent X/Y scale, flip, opacity, bend warp, layer ordering.
 - Easy transform handles and quick person scaling/movement controls.
