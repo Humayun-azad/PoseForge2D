@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+const index=fs.readFileSync('web/index.html','utf8');
+const object=fs.readFileSync('web/pf-19.js','utf8');
+const db=fs.readFileSync('web/pf-2.js','utf8');
+const core=fs.readFileSync('web/pf-1.js','utf8');
+const gradle=fs.readFileSync('android/app/build.gradle.kts','utf8');
+const workflow=fs.readFileSync('.github/workflows/build-apk.yml','utf8');
+const ids=['objectInput','objectTarget','objectCharacter','objectPickPointBtn','objectContactBtn','objectTwoHandBtn','objectFollowBtn','objectTwoHandFollowBtn','objectGripDepthBtn','objectPressureBtn','saveObjectBtn','objectLibrary'];
+for(const id of ids)if(!index.includes('id="'+id+'"'))throw new Error('Missing v0.15 Object Studio UI id: '+id);
+for(const token of ['addObjectData','edgeCutoutCanvas','addBodyToObject','attachObject','updateLinks','pressBody','PoseForgeV015'])if(!object.includes(token))throw new Error('Missing Object Studio integration token: '+token);
+if(!index.includes('<script src="pf-19.js"></script>'))throw new Error('pf-19.js is not loaded');
+if(!core.includes("DB_VERSION=2"))throw new Error('IndexedDB version was not upgraded');
+if(!db.includes("'objects'"))throw new Error('objects IndexedDB store missing');
+if(!gradle.includes('versionCode = 15')||!gradle.includes('versionName = "0.15.0"'))throw new Error('Android v0.15 metadata mismatch');
+if(!workflow.includes('PoseForge2D-v0.15-object-interaction-ai-apk'))throw new Error('v0.15 APK artifact name missing');
+console.log('v0.15 Object Studio integration smoke checks passed');
