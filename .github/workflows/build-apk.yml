@@ -6,6 +6,7 @@ on:
     paths:
       - 'android/**'
       - 'web/**'
+      - 'tests/**'
       - '.github/workflows/build-apk.yml'
 
 permissions:
