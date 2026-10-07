@@ -19,7 +19,7 @@ async function addCharacterData(src,name='Character',opts={}){
  if(chars().length>=MAX_CHARACTERS) throw new Error(`Studio limit is ${MAX_CHARACTERS} active characters.`);
  const im=await imageFromDataURL(src);
  const maxDim=Math.min(canvas.width*0.7,canvas.height*0.7); const s=Math.min(1,maxDim/Math.max(im.width,im.height));
- const layer={id:uid('char'),kind:'character',name,src,baseSrc:src,width:im.width,height:im.height,image:im,...layerDefaults(),scaleX:s,scaleY:s,ownerId:null,partRole:null};
+ const layer={id:uid('char'),kind:'character',name,src,baseSrc:src,originalSrc:src,backgroundRemoved:false,width:im.width,height:im.height,image:im,...layerDefaults(),scaleX:s,scaleY:s,ownerId:null,partRole:null};
  state.layers.push(layer); state.selectedId=layer.id; pushHistory('add character'); renderUI(); draw(); autoSave(); return layer;
 }
 async function setBackground(src){ const im=await imageFromDataURL(src); state.background={src,image:im,brightness:1,saturation:1}; pushHistory('background'); draw(); autoSave(); }

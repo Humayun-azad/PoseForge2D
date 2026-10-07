@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.8</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.9</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -196,12 +196,10 @@
             <button id="bodyDownBtn" class="mini">↓</button>
           </div>
           <div class="row gap wrap">
-            <button id="bodyBiggerBtn" class="mini">Bigger</button>
-            <button id="bodySmallerBtn" class="mini">Smaller</button>
-            <button id="bodyWiderBtn" class="mini">Wider</button>
-            <button id="bodyNarrowerBtn" class="mini">Narrower</button>
-            <button id="bodyTallerBtn" class="mini">Taller</button>
-            <button id="bodyShorterBtn" class="mini">Shorter</button>
+            <button id="bodyWiderBtn" class="mini">Wider, keep size</button>
+            <button id="bodyNarrowerBtn" class="mini">Narrower, keep size</button>
+            <button id="bodyTallerBtn" class="mini">Taller, keep size</button>
+            <button id="bodyShorterBtn" class="mini">Shorter, keep size</button>
             <button id="bodyRotateLeftBtn" class="mini">Rotate left</button>
             <button id="bodyRotateRightBtn" class="mini">Rotate right</button>
           </div>
@@ -262,6 +260,28 @@
         </section>
 
         <section class="control-section">
+          <h3>Character Preparation</h3>
+          <p class="hint">নতুন চরিত্র যোগ করলে অ্যাপ অফলাইনে মানুষ/চরিত্র আলাদা করে পুরোনো ব্যাকগ্রাউন্ড সরানোর চেষ্টা করে। মূল ছবি আলাদা করে রাখা হয়।</p>
+          <div class="row gap wrap">
+            <button id="prepareCharacterBtn" class="mini">Remove Background</button>
+            <button id="restoreCharacterBtn" class="mini">Restore Original</button>
+          </div>
+        </section>
+
+        <section class="control-section">
+          <h3>Easy Occlusion</h3>
+          <p class="hint">একজনকে আরেকজনের পেছনে রাখুন, তারপর পিছনের চরিত্রের শুধু মুখ/হাত/অন্য নির্বাচিত অংশ সামনে আনুন।</p>
+          <label class="field"><span>Front character</span><select id="occlusionTarget"><option value="">Choose character</option></select></label>
+          <div class="row gap wrap">
+            <button id="occlusionBehindBtn" class="mini">Put selected behind</button>
+            <button id="occlusionFrontBtn" class="mini">Put selected in front</button>
+            <button id="occlusionFaceBtn" class="mini">Cover except face</button>
+            <button id="occlusionRegionFrontBtn" class="mini">Bring selected body part front</button>
+          </div>
+          <p class="hint">“Bring selected body part front” Easy Body Regions-এ যে অংশ বাছা আছে সেটাই আলাদা সামনে আনে। তারপর অংশটি টেনে, ঘুরিয়ে বা জাল দিয়ে সূক্ষ্মভাবে বদলাতে পারবেন।</p>
+        </section>
+
+        <section class="control-section">
           <h3>Contact Anchor</h3>
           <p class="hint">একটি hand/part/character অন্য layer-এর বর্তমান contact point-এ pin করুন। Target নড়লে anchored layer follow করবে।</p>
           <label class="field"><span>Target</span><select id="anchorTarget"><option value="">Choose layer</option></select></label>
@@ -301,6 +321,7 @@
   <script src="pf-i18n.js"></script>
   <script src="pf-13.js"></script>
   <script src="pf-14.js"></script>
+  <script src="pf-15.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
