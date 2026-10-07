@@ -20,7 +20,7 @@ for(const s of scripts)assert(fs.existsSync('web/'+s),'referenced script exists:
 assert(repair.includes('offlineFill')&&repair.includes('acceptPreview'),'repair preview/offline/accept engine present');
 assert(repair.includes('repairOverlay:true'),'accepted repair remains an editable overlay layer');
 assert(repair.includes('harmonyLayer'),'scene harmony engine present');
-assert(gradle.includes('versionCode = 14')&&gradle.includes('versionName = "0.14.0"'),'Android version is 0.14.0');
+assert(gradle.includes('versionCode = 15')&&gradle.includes('versionName = "0.15.0"'),'Android version is 0.15.0');
 assert(workflow.includes('PoseForge2D-v0.15-object-interaction-ai-apk'),'APK artifact is named v0.15');
 assert(workflow.includes('node tests/web-smoke.mjs'),'workflow runs web smoke tests');
 if(process.exitCode)process.exit(process.exitCode);
