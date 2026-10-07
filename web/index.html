@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.12</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.13</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -340,7 +340,7 @@
           <p class="hint">Preset is only a shortcut. Create self-contact or multi-character contact, then keep editing pose, mesh and depth freely.</p>
           <label class="field"><span>Interaction target</span><select id="interactionTarget"><option value="self">Own body (Self)</option></select></label>
           <label class="field"><span>Source anchor</span><select id="interactionSource">
-            <option value="rHand">Right hand</option><option value="lHand">Left hand</option><option value="rElbow">Right elbow</option><option value="lElbow">Left elbow</option><option value="rFoot">Right foot</option><option value="lFoot">Left foot</option><option value="rKnee">Right knee</option><option value="lKnee">Left knee</option><option value="head">Head</option><option value="chest">Chest / upper torso</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips / glute area</option>
+            <option value="rHand">Right hand</option><option value="lHand">Left hand</option><option value="rElbow">Right elbow</option><option value="lElbow">Left elbow</option><option value="rFoot">Right foot</option><option value="lFoot">Left foot</option><option value="rKnee">Right knee</option><option value="lKnee">Left knee</option><option value="rShoulder">Right shoulder</option><option value="lShoulder">Left shoulder</option><option value="rHip">Right hip</option><option value="lHip">Left hip</option><option value="head">Head</option><option value="chest">Chest / upper torso</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips / glute area</option>
           </select></label>
           <label class="field"><span>Target anchor</span><select id="interactionTargetRegion">
             <option value="head">Head</option><option value="neck">Neck</option><option value="chest" selected>Chest / upper torso</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips / glute area</option><option value="lShoulder">Left shoulder</option><option value="rShoulder">Right shoulder</option><option value="lUpperArm">Left upper arm</option><option value="rUpperArm">Right upper arm</option><option value="lElbow">Left elbow</option><option value="rElbow">Right elbow</option><option value="lForearm">Left forearm</option><option value="rForearm">Right forearm</option><option value="lHand">Left hand</option><option value="rHand">Right hand</option><option value="lThigh">Left thigh</option><option value="rThigh">Right thigh</option><option value="lKnee">Left knee</option><option value="rKnee">Right knee</option><option value="lLowerLeg">Left lower leg</option><option value="rLowerLeg">Right lower leg</option><option value="lFoot">Left foot</option><option value="rFoot">Right foot</option>
@@ -362,6 +362,23 @@
           <div class="row gap wrap"><button id="selfHandsHipsBtn" class="mini">Hands to own hips</button><button id="selfHandHeadBtn" class="mini">Hand to own head</button><button id="selfHandsChestBtn" class="mini">Hands to own chest</button></div>
           <div class="status-card"><strong>Interaction solver</strong><span id="interactionStatus">No interaction contacts</span></div>
           <div id="interactionContactList" class="library-list contact-list"></div>
+        </section>
+
+        <section id="interactionDynamicsCard" class="control-section interaction-graph-card">
+          <h3>Interaction Dynamics</h3>
+          <p class="hint">একই interaction-এ দুই দিকের contact, soft-body pressure এবং pair follow যোগ করুন। Preset ছাড়াও manual contact-এর সাথে এগুলো কাজ করবে।</p>
+          <label class="field"><span>Reverse source</span><select id="interactionReverseSource">
+            <option value="rHand">Right hand</option><option value="lHand">Left hand</option><option value="rElbow">Right elbow</option><option value="lElbow">Left elbow</option><option value="rFoot">Right foot</option><option value="lFoot">Left foot</option><option value="rKnee">Right knee</option><option value="lKnee">Left knee</option>
+          </select></label>
+          <label class="field"><span>Reverse target</span><select id="interactionReverseTarget">
+            <option value="head">Head</option><option value="chest" selected>Chest / upper torso</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips / glute area</option><option value="lHand">Left hand</option><option value="rHand">Right hand</option>
+          </select></label>
+          <div class="row gap wrap"><button id="interactionReverseBtn" class="mini">Add reciprocal contact</button></div>
+          <label class="field"><span>Soft contact pressure</span><input id="interactionPressure" type="range" min="2" max="60" step="2" value="18"><output id="interactionPressureOut">18px</output></label>
+          <div class="row gap wrap"><button id="interactionPressureBtn" class="mini">Apply soft contact response</button></div>
+          <label class="field"><span>Solver quality</span><select id="interactionSolverQuality"><option value="normal" selected>Normal</option><option value="strong">Strong</option></select></label>
+          <div class="row gap wrap"><button id="interactionPairLockBtn" class="mini">Lock pair spacing</button><button id="interactionPairUnlockBtn" class="mini">Release pair spacing</button></div>
+          <div class="status-card"><strong>Pair follow</strong><span id="interactionPairStatus">Pair follow off</span></div>
         </section>
 
         <section class="control-section">

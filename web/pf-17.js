@@ -122,3 +122,74 @@ function mount(){if(!$('#interactionTarget'))return;targets();list();status();[[
 var draw1=draw;draw=function(){solveAll();draw1();overlay();status()};var render1=renderUI;renderUI=function(){render1();mount();targets();list();status();if(window.PoseForgeI18n&&PoseForgeI18n.localizeTree)PoseForgeI18n.localizeTree(document.body)};
 window.PoseForgeV012={add:add,solveAll:solveAll,clear:clear,preset:preset};
 })();
+
+
+/* PoseForge 2D v0.13 interaction dynamics: reciprocal contacts, soft contact response, pair follow */
+(function(){
+'use strict';
+var tr=function(b,e){return window.PoseForgeI18n&&PoseForgeI18n.lang&&PoseForgeI18n.lang()==='bn'?b:e};
+var owner=function(l){return typeof personOwner==='function'?personOwner(l):(l&&l.kind==='character'?l:state.layers.find(function(x){return x.id===(l&&l.ownerId)})||l)};
+var actor=function(){return owner(selected())};
+var pose=function(l){return l&&l.aiAnalysis&&l.aiAnalysis.poses&&l.aiAnalysis.poses[0]||null};
+var pt=function(l,i){var p=pose(l)&&pose(l)[i];return p?{x:p.x*l.width,y:p.y*l.height}:null};
+var regs=function(l){return window.PoseForgeBodyRegions&&PoseForgeBodyRegions.bodyRegions?PoseForgeBodyRegions.bodyRegions(l):null};
+var joint={lShoulder:11,rShoulder:12,lElbow:13,rElbow:14,lHand:15,rHand:16,lHip:23,rHip:24,lKnee:25,rKnee:26,lFoot:27,rFoot:28};
+var limbEnd={lHand:15,rHand:16,lFoot:27,rFoot:28,lElbow:13,rElbow:14,lKnee:25,rKnee:26};
+function point(l,k){if(joint[k]!=null){var q=pt(l,joint[k]);if(q)return q}var r=regs(l)&&regs(l)[k];return r?{x:r.cx,y:r.cy}:null}
+function targetActor(a){var e=$('#interactionTarget'),id=e&&e.value;if(!id||id==='self')return a;return state.layers.find(function(x){return x.id===id})}
+function family(a){return[a].concat(state.layers.filter(function(x){return x.ownerId===a.id&&!x.semanticDepthPass}))}
+function moveWhole(a,dx,dy){if(typeof wholePersonMove==='function')wholePersonMove(a,dx,dy);else family(a).forEach(function(x){x.x+=dx;x.y+=dy})}
+function commit(label){pushHistory(label);renderUI();draw();autoSave()}
+function cleanupDepth(a,c){if(!c||!c.depthPassId)return;var id=c.depthPassId;state.layers=state.layers.filter(function(x){return x.id!==id});a.semanticDepthExclusions=(a.semanticDepthExclusions||[]).filter(function(x){return x.passId!==id})}
+function makeId(){return typeof uid==='function'?uid('ixr'):('ixr_'+Date.now()+'_'+Math.random().toString(36).slice(2))}
+function reciprocal(){
+ var a=actor(),t=a&&targetActor(a);if(!a||!t||a===t){say(tr('Reciprocal contact-এর জন্য অন্য target character বাছুন।','Choose another target character for a reciprocal contact.'),true);return}
+ var sk=($('#interactionReverseSource')&&$('#interactionReverseSource').value)||'rHand',tk=($('#interactionReverseTarget')&&$('#interactionReverseTarget').value)||'chest';
+ if(limbEnd[sk]!=null&&!pose(t)){say(tr('Target character-কে আগে Analyze করুন।','Analyze the target character first.'),true);return}
+ t.interactionContacts=t.interactionContacts||[];
+ t.interactionContacts.filter(function(c){return c.sourceKey===sk}).forEach(function(c){cleanupDepth(t,c)});
+ t.interactionContacts=t.interactionContacts.filter(function(c){return c.sourceKey!==sk});
+ t.interactionContacts.push({id:makeId(),sourceKey:sk,targetId:a.id,targetKey:tk,ox:0,oy:0,strength:Number(($('#interactionStrength')&&$('#interactionStrength').value)||100),autoReach:true,live:true,depth:'keep',on:true});
+ if(window.PoseForgeV012&&PoseForgeV012.solveAll)PoseForgeV012.solveAll();
+ commit('v0.13 reciprocal interaction');
+ say(tr('উল্টো দিকের contact-ও যোগ হয়েছে। এখন দুই চরিত্র একে অন্যকে ধরে রাখতে পারে।','Reciprocal contact added. Both characters can now hold/contact each other.'));
+}
+function softResponse(){
+ var a=actor(),t=a&&targetActor(a);if(!a||!t||a===t){say(tr('Soft contact-এর জন্য অন্য target character বাছুন।','Choose another target character for soft contact.'),true);return}
+ var sk=($('#interactionSource')&&$('#interactionSource').value)||'rHand',tk=($('#interactionTargetRegion')&&$('#interactionTargetRegion').value)||'chest';
+ var sp=point(a,sk),tp=point(t,tk),rr=regs(t)&&regs(t)[tk];if(!sp||!tp||!rr){say(tr('এই contact point পাওয়া যায়নি। আগে Analyze করলে ভালো কাজ করবে।','The contact point is unavailable. Analyze first for better placement.'),true);return}
+ if(!t.mesh)createMeshForLayer(t,9);
+ var sw=localToWorld(a,sp),tw=localToWorld(t,tp),vx=tw.x-sw.x,vy=tw.y-sw.y,len=Math.hypot(vx,vy)||1,amount=Number(($('#interactionPressure')&&$('#interactionPressure').value)||18);
+ var endWorld={x:tw.x+vx/len*amount,y:tw.y+vy/len*amount},endLocal=worldToLocal(t,endWorld),dx=endLocal.x-tp.x,dy=endLocal.y-tp.y,rad=Math.max(24,(rr.rx+rr.ry)*.68);
+ applySoftMeshDelta(t,tp,dx,dy,rad,.78);
+ if(window.PoseForgeV010&&PoseForgeV010.applyDirectionalAreaLock)PoseForgeV010.applyDirectionalAreaLock(t,rr,dx*.7,dy*.7,'push');
+ t.meshRev=(t.meshRev||0)+1;if(typeof meshRenderCache!=='undefined')meshRenderCache.delete(t);
+ commit('v0.13 soft contact response');
+ say(tr('Target-এর contact জায়গায় হালকা soft-body response দেওয়া হয়েছে।','A local soft-body response was applied at the target contact.'));
+}
+function lockPair(){
+ var a=actor(),t=a&&targetActor(a);if(!a||!t||a===t){say(tr('Pair follow-এর জন্য অন্য target character বাছুন।','Choose another target character for pair follow.'),true);return}
+ var ac=localToWorld(a,{x:a.width*.5,y:a.height*.5}),tc=localToWorld(t,{x:t.width*.5,y:t.height*.5});
+ a.interactionPairFollow={targetId:t.id,dx:ac.x-tc.x,dy:ac.y-tc.y,enabled:true};
+ commit('v0.13 pair follow');
+}
+function unlockPair(){var a=actor();if(!a)return;a.interactionPairFollow=null;commit('v0.13 release pair follow')}
+function updatePairs(){
+ var chars0=typeof chars==='function'?chars():state.layers.filter(function(x){return x.kind==='character'});
+ chars0.forEach(function(a){var p=a.interactionPairFollow;if(!p||!p.enabled)return;var t=state.layers.find(function(x){return x.id===p.targetId});if(!t)return;
+   if(t.interactionPairFollow&&t.interactionPairFollow.targetId===a.id)return;
+   var ac=localToWorld(a,{x:a.width*.5,y:a.height*.5}),tc=localToWorld(t,{x:t.width*.5,y:t.height*.5}),nx=tc.x+p.dx,ny=tc.y+p.dy;
+   var dx=nx-ac.x,dy=ny-ac.y;if(Math.hypot(dx,dy)>.35)moveWhole(a,dx,dy);
+ });
+}
+function mount(){
+ var card=$('#interactionDynamicsCard');if(!card)return;
+ [['interactionReverseBtn',reciprocal],['interactionPressureBtn',softResponse],['interactionPairLockBtn',lockPair],['interactionPairUnlockBtn',unlockPair]].forEach(function(p){var e=$(p[0]);if(e&&!e.dataset.v13){e.dataset.v13='1';e.addEventListener('click',p[1])}});
+ var q=$('#interactionPressure');if(q&&!q.dataset.v13){q.dataset.v13='1';q.addEventListener('input',function(){if($('#interactionPressureOut'))$('#interactionPressureOut').textContent=q.value+'px'})}
+ var a=actor(),s=$('#interactionPairStatus');if(s)s.textContent=a&&a.interactionPairFollow?tr('Pair follow চালু','Pair follow active'):tr('Pair follow বন্ধ','Pair follow off');
+}
+var draw0=draw;draw=function(){updatePairs();var q=($('#interactionSolverQuality')&&$('#interactionSolverQuality').value)||'normal';if(q==='strong'&&window.PoseForgeV012&&PoseForgeV012.solveAll)PoseForgeV012.solveAll();draw0()};
+var render0=renderUI;renderUI=function(){render0();mount();if(window.PoseForgeI18n&&PoseForgeI18n.localizeTree)PoseForgeI18n.localizeTree(document.body)};
+window.addEventListener('poseforge-language',function(){setTimeout(mount,0)});
+window.PoseForgeV013={reciprocal:reciprocal,softResponse:softResponse,lockPair:lockPair,unlockPair:unlockPair};
+})();
