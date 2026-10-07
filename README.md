@@ -2,7 +2,7 @@
 
 PoseForge 2D is an offline-first 2D character and scene editor for Android and browsers. The project is modular so another coding AI or developer can continue it without reverse-engineering a monolith.
 
-## What works in v0.12
+## What works in v0.13
 
 - Import real photos, anime, manga, cartoons, illustrations, and stylized humanoid raster art.
 - Bengali-first UI with an instant বাংলা / English language switch. User-facing controls can be changed at any time without changing project data.
@@ -19,7 +19,12 @@ PoseForge 2D is an offline-first 2D character and scene editor for Android and b
 - Cover/reveal shortcuts include cover-except-face and face-plus-hands-in-front. Precision Mask remains available for edge cleanup when automatic region geometry is imperfect.
 - v0.11 semantic contact anchors connect a selected hand/foot limb to a named body region on another character. Two-bone IK preserves measured limb segment lengths as the target moves, within reach limits.
 
-- v0.12 adds a **General Interaction Graph** instead of treating one example as the feature boundary. A character can keep multiple simultaneous contacts to another character or to its own body.
+- v0.12 adds a **General Interaction Graph** instead of treating one example as the feature boundary.
+- v0.13 expands the interaction system with **reciprocal contacts** so both characters can independently hold/contact one another instead of only one side following the other.
+- v0.13 adds **soft contact response**: a user-triggered local soft-body deformation can be applied at the chosen target region for contact/pressure scenes without turning it into an automatic permanent physics simulation.
+- v0.13 adds **pair follow** to preserve the arranged spacing of an interacting pair while the target character is moved, plus a stronger optional solver pass for dense multi-contact setups.
+- Source anchors now also expose shoulders and hips for broader body-to-body positioning. Presets remain shortcuts only; the same manual contact tools work for single-character self-contact and multi-character scenes.
+ A character can keep multiple simultaneous contacts to another character or to its own body.
 - Source anchors include hands, feet, elbows, knees and body anchors; targets include major visible body regions and joints. Exact target offsets and tap-to-pick contact points make placement less preset-bound.
 - Hand/foot contacts use the existing two-bone IK foundation, elbow/knee contacts use constrained mid-joint solving, and live contacts keep following a moving target. Auto-reach can move the source character closer when a limb cannot reach without stretching the measured limb chain.
 - Contact depth can keep the current order or reuse v0.11 semantic depth to bring the source limb in front / send it behind. Contacts are stored on the character and therefore travel with normal project serialization.
@@ -52,7 +57,7 @@ This is deliberately style-agnostic: a human photo stays photographic, anime sta
 
 ## AI status
 
-Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.12 uses those body, face and hand landmarks to drive local deformable mesh editing, smart limb IK and finger-chain posing. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack. Semantic depth masks are landmark/region geometry, not a full neural per-limb segmentation model, so difficult silhouettes can still need Precision Mask cleanup.
+Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.13 uses those body, face and hand landmarks to drive local deformable mesh editing, smart limb IK and finger-chain posing. Generative reconstruction/inpainting is still not bundled, so the Repair action requires a compatible online endpoint or a future offline model pack. Semantic depth masks are landmark/region geometry, not a full neural per-limb segmentation model, so difficult silhouettes can still need Precision Mask cleanup.
 
 See `models/README.md`, `docs/AI_HANDOFF.md`, and `server-contract/openapi.yaml`.
 
@@ -74,4 +79,4 @@ Use images you own or have permission to edit. The shipped editor provides gener
 
 MIT. Third-party AI models added later may have their own licenses.
 
-Build target: v0.12 general single/multi-character interaction graph + natural full-body soft deformation + size-locked local shaping + smart limb/finger IK + semantic region/limb depth splitting + automatic character cutout + bilingual UI + deformable mesh + face + hand + masks + offline-vision APK.
+Build target: v0.13 general single/multi-character interaction studio + natural full-body soft deformation + size-locked local shaping + smart limb/finger IK + semantic region/limb depth splitting + automatic character cutout + bilingual UI + deformable mesh + face + hand + masks + offline-vision APK.
