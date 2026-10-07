@@ -22,8 +22,11 @@ window.PoseForgeAI = (() => {
       if (!out.ok) throw new Error(out.error || 'Offline AI analysis failed.');
       return out;
     },
-    async repair() {
-      throw new Error('Generative offline reconstruction is not bundled yet. Landmark and segmentation AI are active.');
+    async repair(payload) {
+      if (window.PoseForgeRepairStudio && typeof window.PoseForgeRepairStudio.offlineRepairPayload === 'function' && payload?.mask) {
+        return window.PoseForgeRepairStudio.offlineRepairPayload(payload);
+      }
+      throw new Error('Offline local repair needs a user mask. Large missing-anatomy neural reconstruction is not bundled yet.');
     }
   };
 
