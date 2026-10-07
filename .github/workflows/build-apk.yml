@@ -2,7 +2,7 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, v0.15-object-interaction ]
     paths:
       - 'android/**'
       - 'web/**'
@@ -47,22 +47,24 @@ jobs:
           for f in web/pf-*.js; do node --check "$f"; done
       - name: Run web smoke tests
         run: node tests/web-smoke.mjs
-      - name: Verify v0.14 integration smoke checks
-        run: node tests/v014-smoke.mjs
+      - name: Verify v0.14 and v0.15 integration smoke checks
+        run: |
+          node tests/v014-smoke.mjs
+          node tests/v015-smoke.mjs
       - name: Build debug APK
         working-directory: android
         run: gradle --no-daemon assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: PoseForge2D-v0.14-repair-harmony-ai-apk
+          name: PoseForge2D-v0.15-object-interaction-ai-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
       - name: Upload source bundle
         uses: actions/upload-artifact@v4
         with:
-          name: PoseForge2D-v0.14-source
+          name: PoseForge2D-v0.15-source
           path: |
             README.md
             LICENSE

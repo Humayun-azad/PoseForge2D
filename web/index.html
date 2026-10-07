@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.14</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.15</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -33,6 +33,7 @@
 
     <section class="quickbar">
       <label class="button primary">+ Character<input id="charInput" type="file" accept="image/*" hidden></label>
+      <label class="button">+ Object<input id="objectInput" type="file" accept="image/*" hidden></label>
       <label class="button">Background<input id="bgInput" type="file" accept="image/*" hidden></label>
       <button id="cutModeBtn" class="button">✂ Cut Part</button>
       <button id="finishCutBtn" class="button" disabled>Finish Cut</button>
@@ -77,6 +78,7 @@
           <div class="library-grid">
             <div><strong>Characters</strong><div id="characterLibrary" class="library-list"></div></div>
             <div><strong>Poses</strong><div id="poseLibrary" class="library-list"></div></div>
+            <div><strong>Objects</strong><div id="objectLibrary" class="library-list"></div></div>
           </div>
         </section>
 
@@ -398,6 +400,44 @@
           <div class="status-card"><strong>Pair follow</strong><span id="interactionPairStatus">Pair follow off</span></div>
         </section>
 
+        <section class="control-section object-studio-card">
+          <h3>Object Studio + Human Interaction</h3>
+          <p class="hint">যেকোনো সাধারণ object image Studio-তে আনুন, edge background কাটুন, grip point বাছুন, তারপর হাত/পা/কনুই/হাঁটু বা body region-এর সাথে contact/follow তৈরি করুন। Preset-এর মধ্যে সীমাবদ্ধ নয়।</p>
+          <div class="status-card"><strong>Objects</strong><span id="objectCount">0 object(s)</span></div>
+          <label class="field"><span>Object</span><select id="objectTarget"><option value="">Choose object</option></select></label>
+          <label class="field"><span>Character</span><select id="objectCharacter"><option value="">Choose character</option></select></label>
+          <label class="field"><span>Object library name</span><input id="objectLibraryName" class="text" value="Object"></label>
+          <div class="row gap wrap"><button id="saveObjectBtn" class="mini">Save Object</button><button id="objectPrepareBtn" class="mini">Remove edge background</button><button id="objectRestoreBtn" class="mini">Restore original object</button></div>
+          <label class="field"><span>Cutout tolerance</span><input id="objectCutoutThreshold" type="range" min="8" max="100" step="2" value="46"><output id="objectCutoutThresholdOut">46</output></label>
+          <h4>Grip / contact point</h4>
+          <div class="row gap wrap"><button id="objectPickPointBtn" class="mini">Pick grip point on object</button></div>
+          <label class="field"><span>Grip X</span><input id="objectGripX" type="range" min="-50" max="50" step="1" value="0"><output id="objectGripXOut">0%</output></label>
+          <label class="field"><span>Grip Y</span><input id="objectGripY" type="range" min="-50" max="50" step="1" value="0"><output id="objectGripYOut">0%</output></label>
+          <label class="field"><span>Body anchor</span><select id="objectBodyAnchor">
+            <option value="rHand">Right hand</option><option value="lHand">Left hand</option><option value="rElbow">Right elbow</option><option value="lElbow">Left elbow</option><option value="rFoot">Right foot</option><option value="lFoot">Left foot</option><option value="rKnee">Right knee</option><option value="lKnee">Left knee</option><option value="head">Head</option><option value="chest">Chest</option><option value="abdomen">Abdomen</option><option value="waist">Waist</option><option value="hips">Hips</option>
+          </select></label>
+          <label class="field"><span>Contact strength</span><input id="objectContactStrength" type="range" min="20" max="100" step="5" value="100"><output id="objectContactStrengthOut">100%</output></label>
+          <label class="switch"><input id="objectAutoReach" type="checkbox" checked><span>Auto move character closer when needed</span></label>
+          <div class="row gap wrap"><button id="objectContactBtn" class="mini">Body-part → Object contact</button><button id="objectReleaseContactBtn" class="mini">Release object contacts</button></div>
+          <h4>Two-hand hold</h4>
+          <label class="field"><span>Hand spacing on object</span><input id="objectGripSpan" type="range" min="4" max="90" step="2" value="38"><output id="objectGripSpanOut">38%</output></label>
+          <div class="row gap wrap"><button id="objectTwoHandBtn" class="mini">Solve two-hand hold</button></div>
+          <h4>Object follows body</h4>
+          <label class="switch"><input id="objectFollowRotation" type="checkbox" checked><span>Follow hand/body angle</span></label>
+          <label class="switch"><input id="objectFollowScale" type="checkbox"><span>Two-hand spacing can scale object</span></label>
+          <div class="row gap wrap"><button id="objectFollowBtn" class="mini">Object follow selected anchor</button><button id="objectTwoHandFollowBtn" class="mini">Object follow both hands</button><button id="objectReleaseFollowBtn" class="mini">Release follow</button></div>
+          <div class="status-card"><strong>Object follow</strong><span id="objectLinkStatus">No object follow</span></div>
+          <h4>Depth / overlap</h4>
+          <label class="switch"><input id="objectUseLeft" type="checkbox" checked><span>Left hand in front on grip</span></label>
+          <label class="switch"><input id="objectUseRight" type="checkbox" checked><span>Right hand in front on grip</span></label>
+          <div class="row gap wrap"><button id="objectGripDepthBtn" class="mini">Hands front of object</button><button id="objectFrontBtn" class="mini">Object in front</button><button id="objectBehindBtn" class="mini">Object behind</button></div>
+          <h4>Soft body contact</h4>
+          <label class="field"><span>Target body region</span><select id="objectPressRegion"><option value="chest">Chest</option><option value="abdomen" selected>Abdomen</option><option value="waist">Waist</option><option value="hips">Hips</option><option value="lUpperArm">Left upper arm</option><option value="rUpperArm">Right upper arm</option><option value="lThigh">Left thigh</option><option value="rThigh">Right thigh</option></select></label>
+          <label class="field"><span>Pressure</span><input id="objectPressure" type="range" min="2" max="50" step="2" value="16"><output id="objectPressureOut">16px</output></label>
+          <button id="objectPressureBtn" class="mini">Apply object soft-body response</button>
+          <p class="hint">Object cutout হলো local edge-connected background remover। জটিল background হলে Precision Mask দিয়ে cleanup করুন।</p>
+        </section>
+
         <section class="control-section">
           <h3>Contact Anchor</h3>
           <p class="hint">একটি hand/part/character অন্য layer-এর বর্তমান contact point-এ pin করুন। Target নড়লে anchored layer follow করবে।</p>
@@ -442,6 +482,7 @@
   <script src="pf-16.js"></script>
   <script src="pf-17.js"></script>
   <script src="pf-18.js"></script>
+  <script src="pf-19.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>

@@ -2,7 +2,7 @@ function openDB(){
  if(dbPromise) return dbPromise;
  dbPromise = new Promise((resolve,reject)=>{
    const r=indexedDB.open(DB_NAME,DB_VERSION);
-   r.onupgradeneeded=()=>{ const db=r.result; ['characters','poses','autosave','snapshots'].forEach(s=>{if(!db.objectStoreNames.contains(s))db.createObjectStore(s,{keyPath:'id'});}); };
+   r.onupgradeneeded=()=>{ const db=r.result; ['characters','poses','objects','autosave','snapshots'].forEach(s=>{if(!db.objectStoreNames.contains(s))db.createObjectStore(s,{keyPath:'id'});}); };
    r.onsuccess=()=>resolve(r.result); r.onerror=()=>reject(r.error);
  }); return dbPromise;
 }
