@@ -13,7 +13,7 @@
     <header class="topbar">
       <div class="brand">
         <div class="logo">PF</div>
-        <div><strong>PoseForge 2D <span class="version-badge">v0.13</span></strong><small>Offline-first character & scene studio</small></div>
+        <div><strong>PoseForge 2D <span class="version-badge">v0.14</span></strong><small>Offline-first character & scene studio</small></div>
       </div>
       <div class="mode-switch" title="Language">
         <label>Language</label>
@@ -96,8 +96,25 @@
           <div class="status-card"><strong>Online AI</strong><span id="onlineStatus">Endpoint not configured</span></div>
           <label class="field"><span>Compatible AI endpoint</span><input id="endpointUrl" class="text" placeholder="https://your-server.example/v1"></label>
           <label class="field"><span>Token (optional)</span><input id="endpointToken" class="text" type="password" placeholder="not exported in projects"></label>
-          <div class="row gap wrap"><button id="analyzeBtn" class="mini">Analyze selected</button><button id="autoPartsBtn" class="mini">Auto Body Parts</button><button id="semanticPartsBtn" class="mini">Semantic Split</button><button id="repairBtn" class="mini">Reconstruct/Repair</button></div>
-          <p class="hint">এই build-এ কোনো paid API hard-code করা নেই। AI adapters আলাদা module, পরে যেকোনো compatible model/provider বসানো যায়।</p>
+          <div class="row gap wrap"><button id="analyzeBtn" class="mini">Analyze selected</button><button id="autoPartsBtn" class="mini">Auto Body Parts</button><button id="semanticPartsBtn" class="mini">Semantic Split</button><button id="repairBtn" class="mini">Open Repair Studio</button></div>
+          <div class="repair-studio-card">
+            <h3>Repair Studio</h3>
+            <p class="hint">Default OFF. যে জায়গা দরকার শুধু সেখানে mask আঁকুন, Preview দেখুন, তারপর Accept/Retry/Cancel করুন। Offline mode ছোট gap/texture repair করে; বড় missing anatomy-র neural reconstruction এখনো online compatible endpoint বা future model pack চায়।</p>
+            <div class="row gap wrap"><button id="repairPaintBtn" class="mini">Paint repair mask</button><button id="repairClearMaskBtn" class="mini">Clear repair mask</button></div>
+            <label class="field"><span>Repair brush</span><input id="repairBrushSize" type="range" min="8" max="220" step="2" value="56"><output id="repairBrushSizeOut">56px</output></label>
+            <label class="field"><span>Offline strategy</span><select id="repairStrategy"><option value="auto">Auto local fill</option><option value="mirror">Mirror-biased fill</option><option value="spread">Edge spread</option></select></label>
+            <label class="field"><span>Instruction</span><input id="repairInstruction" class="text" placeholder="e.g. continue sleeve / restore neutral visible edge"></label>
+            <label class="switch"><input id="repairAutoPreview" type="checkbox"><span>Auto preview after mask stroke</span></label>
+            <div class="row gap wrap"><button id="repairPreviewBtn" class="mini">Preview</button><button id="repairRetryBtn" class="mini">Retry</button><button id="repairAcceptBtn" class="mini">Accept</button><button id="repairCancelBtn" class="mini">Cancel preview</button></div>
+            <div class="status-card"><strong>Repair status</strong><span id="repairStudioStatus">No repair mask yet.</span></div>
+          </div>
+          <div class="repair-studio-card">
+            <h3>Scene Harmony Pro</h3>
+            <p class="hint">Background-এর সাথে exposure, contrast, color temperature, saturation, blur/sharpness, grain ও shadow একসাথে মেলায়। Source style বদলায় না।</p>
+            <label class="field"><span>Harmony strength</span><input id="harmonyStrength" type="range" min="10" max="100" step="5" value="75"><output id="harmonyStrengthOut">75%</output></label>
+            <div class="row gap wrap"><button id="harmonySelectedBtn" class="mini">Match selected to scene</button><button id="harmonyAllBtn" class="mini">Match all to scene</button></div>
+          </div>
+          <p class="hint">এই build-এ কোনো paid API hard-code করা নেই। Online repair provider-neutral। Offline repair network ছাড়াই local pixel reconstruction করে, কিন্তু এটাকে large-pose neural generation বলা হচ্ছে না।</p>
         </section>
       </aside>
 
@@ -424,6 +441,7 @@
   <script src="pf-15.js"></script>
   <script src="pf-16.js"></script>
   <script src="pf-17.js"></script>
+  <script src="pf-18.js"></script>
   <script>document.getElementById("autoPartsBtn").addEventListener("click",()=>window.autoCreateBodyParts&&window.autoCreateBodyParts());</script>
 </body>
 </html>
