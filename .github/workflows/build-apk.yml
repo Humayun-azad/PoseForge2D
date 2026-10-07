@@ -55,3 +55,20 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+      - name: Upload source bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: PoseForge2D-v0.12-source
+          path: |
+            README.md
+            LICENSE
+            app-spec.json
+            docs
+            models
+            server-contract
+            web
+            android
+            !android/app/build/**
+            !android/app/src/main/assets/models/**
+          if-no-files-found: error
+          retention-days: 30
