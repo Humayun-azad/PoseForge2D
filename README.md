@@ -2,7 +2,7 @@
 
 PoseForge 2D is an offline-first 2D character and scene editor for Android and browsers. The project is modular so another coding AI or developer can continue it without reverse-engineering a monolith.
 
-## What works in v0.14
+## What works in v0.15
 
 - Import real photos, anime, manga, cartoons, illustrations, and stylized humanoid raster art.
 - Bengali-first UI with an instant বাংলা / English language switch. User-facing controls can be changed at any time without changing project data.
@@ -28,6 +28,14 @@ PoseForge 2D is an offline-first 2D character and scene editor for Android and b
 - Online repair remains provider-neutral and can receive the source image, mask, repair instruction, seed, and strategy through the existing `/reconstruct` adapter. For real-person repair, the built-in instruction requests only visible neutral or clothing-consistent reconstruction.
 - v0.14 adds **Scene Harmony Pro** for background-relative brightness, contrast, saturation, warm/cool balance, sharpness/blur, grain, contact shadow, and cast-shadow harmonization. The same controls apply to photo, anime, manga, cartoon, and illustration layers.
 - Repair masks and accepted repair overlays serialize with normal `.pose2d` projects. Accepted repairs stay independently editable instead of destructively replacing the source image.
+
+- v0.15 adds **Object Studio**. Arbitrary raster objects can be imported as normal editable layers, transformed, ordered in front/behind characters, saved to a local Object Library, and restored non-destructively to their original source.
+- Object preparation includes an offline edge-connected background remover for simple object photos. Difficult silhouettes stay compatible with the existing Precision Mask cleanup workflow.
+- Human ↔ object contacts reuse the general interaction solver: a hand, foot, elbow, or knee can be solved to a picked point on an object, with live contact and auto-reach where possible.
+- Two-hand hold places both hands on configurable grip points across the object instead of relying on a named object preset.
+- Objects can follow a selected body anchor, or follow both hands while tracking hand-to-hand angle. Optional two-hand distance scaling is available for suitable props.
+- Object depth helpers can place the prop in front/behind the person and create hand-front semantic passes for grip overlap.
+- User-triggered object pressure can apply a local soft-body response to a chosen visible body region. It remains an editable 2D deformation, not a claim of full biomechanical simulation.
 
 - Source anchors now also expose shoulders and hips for broader body-to-body positioning. Presets remain shortcuts only; the same manual contact tools work for single-character self-contact and multi-character scenes.
 - A character can keep multiple simultaneous contacts to another character or to its own body.
@@ -69,7 +77,7 @@ This is deliberately style-agnostic: a human photo stays photographic, anime sta
 
 ## AI status
 
-Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.14 uses those body, face and hand landmarks to drive local deformable mesh editing, smart limb IK and finger-chain posing. Full neural generative reconstruction/inpainting is still not bundled. v0.14 includes offline masked local-pixel repair for small missing areas, while large unseen-region generation still requires a compatible online endpoint or a future offline model pack. Semantic depth masks are landmark/region geometry, not a full neural per-limb segmentation model, so difficult silhouettes can still need Precision Mask cleanup.
+Offline MediaPipe pose, face, hand and semantic person/clothes/body-skin segmentation models are bundled by the Android build. v0.15 uses those body, face and hand landmarks to drive local deformable mesh editing, smart limb IK and finger-chain posing. Full neural generative reconstruction/inpainting is still not bundled. v0.15 keeps the v0.14 offline masked local-pixel repair for small missing areas, while large unseen-region generation still requires a compatible online endpoint or a future offline model pack. Semantic depth masks are landmark/region geometry, not a full neural per-limb segmentation model, so difficult silhouettes can still need Precision Mask cleanup.
 
 See `models/README.md`, `docs/AI_HANDOFF.md`, and `server-contract/openapi.yaml`.
 
@@ -91,4 +99,4 @@ Use images you own or have permission to edit. The shipped editor provides gener
 
 MIT. Third-party AI models added later may have their own licenses.
 
-Build target: v0.14 masked repair preview + scene harmony + general single/multi-character interaction studio + natural full-body soft deformation + size-locked local shaping + smart limb/finger IK + semantic region/limb depth splitting + automatic character cutout + bilingual UI + deformable mesh + face + hand + masks + offline-vision APK.
+Build target: v0.15 Object Studio + human/object contact and follow + v0.14 masked repair preview + scene harmony + general single/multi-character interaction studio + natural full-body soft deformation + size-locked local shaping + smart limb/finger IK + semantic region/limb depth splitting + automatic character cutout + bilingual UI + deformable mesh + face + hand + masks + offline-vision APK.
