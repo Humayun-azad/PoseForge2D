@@ -58,7 +58,7 @@ jobs:
       - name: Upload source bundle
         uses: actions/upload-artifact@v4
         with:
-          name: PoseForge2D-v0.12-source
+          name: PoseForge2D-v0.13-source
           path: |
             README.md
             LICENSE
