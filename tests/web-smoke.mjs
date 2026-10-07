@@ -9,6 +9,7 @@ function assert(ok,msg){if(!ok){console.error('FAIL:',msg);process.exitCode=1;}e
 
 assert(html.includes('v0.15</span>'),'UI version badge is v0.15');
 assert(html.includes('<script src="pf-18.js"></script>'),'Repair Studio module is loaded');
+assert(html.includes('<script src="pf-19.js"></script>'),'Object Studio module is loaded');
 for(const id of ['repairPaintBtn','repairPreviewBtn','repairRetryBtn','repairAcceptBtn','repairCancelBtn','repairClearMaskBtn','harmonySelectedBtn','harmonyAllBtn']){
   assert(html.includes('id="'+id+'"'),'control exists: '+id);
 }
