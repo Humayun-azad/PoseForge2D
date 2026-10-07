@@ -1,4 +1,4 @@
-/* PoseForge 2D v0.7 easy full-body region controls + quick pose presets */
+/* PoseForge 2D v0.9 easy full-body region controls + size-locked reshaping */
 (function(){
   'use strict';
   let pickMode=false;
@@ -78,15 +78,16 @@
   function applyAction(kind,sign=1){
     const raw=selected(),layer=ownerFor(raw);if(!layer){say(PoseForgeI18n?.lang()==='bn'?'আগে একটি চরিত্র বাছুন।':'Select a character first.',true);return;}
     const key=selectedRegionKey(),a=amount();
+    const reshapeFactor=sign>0?1+a/300:Math.max(.70,1-a/320);
     if(key==='whole'){
       if(kind==='moveX')wholePersonMove(layer,sign*a,0);else if(kind==='moveY')wholePersonMove(layer,0,sign*a);
-      else if(kind==='scaleX')scaleWhole(layer,sign>0?1+a/300:Math.max(.65,1-a/330),1);
-      else if(kind==='scaleY')scaleWhole(layer,1,sign>0?1+a/300:Math.max(.65,1-a/330));
+      else if(kind==='scaleX')scaleWhole(layer,reshapeFactor,1/reshapeFactor);
+      else if(kind==='scaleY')scaleWhole(layer,1/reshapeFactor,reshapeFactor);
       else if(kind==='rotate')rotateWhole(layer,sign*Math.max(2,a/4));
     }else{
       if(kind==='moveX')deformRegion(layer,'moveX',sign*a);else if(kind==='moveY')deformRegion(layer,'moveY',sign*a);
-      else if(kind==='scaleX')deformRegion(layer,'scaleX',sign>0?1+a/260:Math.max(.68,1-a/290));
-      else if(kind==='scaleY')deformRegion(layer,'scaleY',sign>0?1+a/260:Math.max(.68,1-a/290));
+      else if(kind==='scaleX'){deformRegion(layer,'scaleX',reshapeFactor);deformRegion(layer,'scaleY',1/reshapeFactor);}
+      else if(kind==='scaleY'){deformRegion(layer,'scaleY',reshapeFactor);deformRegion(layer,'scaleX',1/reshapeFactor);}
       else if(kind==='rotate')deformRegion(layer,'rotate',sign*Math.max(2,a/5));
     }
     commitEdit('easy body region');
