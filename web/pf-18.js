@@ -147,6 +147,7 @@ function drawRepairOverlay(){
   ctx.restore();
 }
 function mount(){
+  var mainRepair=$('#repairBtn');if(mainRepair&&!mainRepair.dataset.v14){mainRepair.dataset.v14='1';mainRepair.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();openRepair();},true);}
   var paint=$('#repairPaintBtn');if(paint&&!paint.dataset.v14){paint.dataset.v14='1';paint.addEventListener('click',function(){setRepairMode(!repairMode)});}
   [['repairPreviewBtn',function(){makePreview(retrySeed)}],['repairRetryBtn',retry],['repairAcceptBtn',acceptPreview],['repairCancelBtn',cancelPreview],['repairClearMaskBtn',clearMask],['harmonySelectedBtn',function(){harmony(true)}],['harmonyAllBtn',function(){harmony(false)}]].forEach(function(x){var e=$(x[0]);if(e&&!e.dataset.v14){e.dataset.v14='1';e.addEventListener('click',x[1]);}});
   var bs=$('#repairBrushSize');if(bs&&!bs.dataset.v14){bs.dataset.v14='1';bs.addEventListener('input',function(){if($('#repairBrushSizeOut'))$('#repairBrushSizeOut').textContent=bs.value+'px';});}
